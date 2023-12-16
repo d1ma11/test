@@ -10,31 +10,28 @@ public class Product {
     //Количество товара
     private int count;
     //Цена одного товара
-    private double price;
+    private BigDecimal price;
     //Скидка на данный товар
-    private double discount;
+    private BigDecimal discount;
 
-    public Product(int count, double price, double discount) {
+    public Product(int count, BigDecimal price, BigDecimal discount) {
         this.count = count;
         this.price = price;
-        this.discount = discount / 100.0;
+        this.discount = discount.divide(BigDecimal.valueOf(100.0));
     }
 
     public void buyProduct() {
-        System.out.printf("Product without discount: %.2f\n", this.buyWithoutDiscount());
-        System.out.printf("Product with discount: %.2f\n\n", this.buyWithDiscount());
+        System.out.println("Product without discount: " + this.buyWithoutDiscount());
+        System.out.println("Product with discount: " + this.buyWithDiscount() + '\n');
     }
 
-    public double buyWithoutDiscount() {
-        double answer = (double) this.getCount() * this.getPrice();
-        return answer;
+    public BigDecimal buyWithoutDiscount() {
+        return this.price.multiply(BigDecimal.valueOf(this.count)).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public double buyWithDiscount() {
-        double answer = this.buyWithoutDiscount() - this.buyWithoutDiscount() * this.discount;
-        BigDecimal bd = new BigDecimal(Double.toString(answer));
-        bd = bd.setScale(2, RoundingMode.HALF_UP);
-        return bd.doubleValue();
+    public BigDecimal buyWithDiscount() {
+        BigDecimal answer = this.buyWithoutDiscount().subtract(this.buyWithoutDiscount().multiply(this.discount));
+        return answer.setScale(2, RoundingMode.HALF_UP);
     }
 
     public int getCount() {
@@ -45,20 +42,20 @@ public class Product {
         this.count = count;
     }
 
-    public double getPrice() {
+    public BigDecimal getPrice() {
         return this.price;
     }
 
-    public void setPrice(int price) {
-        this.price = (double) price;
+    public void setPrice(BigDecimal price) {
+        this.price = price;
     }
 
-    public double getDiscount() {
+    public BigDecimal getDiscount() {
         return this.discount;
     }
 
-    public void setDiscount(int discount) {
-        this.discount = (double) discount;
+    public void setDiscount(BigDecimal discount) {
+        this.discount = discount;
     }
 
     public String toString() {

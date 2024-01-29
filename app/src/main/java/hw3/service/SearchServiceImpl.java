@@ -45,4 +45,18 @@ public class SearchServiceImpl implements SearchService {
             }
         }
     }
+
+    protected static List<Animal> duplicates = new ArrayList<>();
+
+    public List<Animal> getDuplicates() {
+        return duplicates;
+    }
+
+    public void printDuplicates(Animal[] duplicateAnimals) {
+        findDuplicate(duplicateAnimals);
+
+        for (Animal animal : duplicates) {
+            System.out.println(animal);
+        }
+    }
 }

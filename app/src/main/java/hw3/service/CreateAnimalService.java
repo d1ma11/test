@@ -16,7 +16,7 @@ public interface CreateAnimalService {
             case PARROT:
                 return AnimalFactory.createParrot();
             case HAMSTER:
-                return AnimalFactory.createHasmter();
+                return AnimalFactory.createHamster();
             default:
                 System.out.println("Error");
                 return null;

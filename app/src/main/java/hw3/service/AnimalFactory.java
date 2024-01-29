@@ -61,7 +61,7 @@ public class AnimalFactory {
      * Создает хомяка со случайными параметрами
      * @return хомяк
      */
-    public static Animal createHasmter() {
+    public static Animal createHamster() {
         HamsterBreeds breed = HamsterBreeds.randomBreed();
         NamesEnum name = NamesEnum.randomName();
         double cost = RANDOM.nextDouble(500_000, 1_000_000);

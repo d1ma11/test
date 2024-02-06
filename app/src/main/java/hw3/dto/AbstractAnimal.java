@@ -15,9 +15,8 @@ public abstract class AbstractAnimal implements Animal {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (!(obj instanceof AbstractAnimal))
+        if (!(obj instanceof AbstractAnimal that))
             return false;
-        AbstractAnimal that = (AbstractAnimal) obj;
         return breed.equals(that.breed) &&
                 name.equals(that.name) &&
                 cost.equals(that.cost) &&

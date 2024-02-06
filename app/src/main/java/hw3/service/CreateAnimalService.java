@@ -22,6 +22,8 @@ public interface CreateAnimalService {
                 return null;
         }
     }
-    
+
     Animal[] createAnimals();
+
+    void setAnimalType(AnimalsEnum animalsEnum);
 }

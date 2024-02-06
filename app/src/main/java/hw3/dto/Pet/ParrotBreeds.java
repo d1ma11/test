@@ -1,7 +1,5 @@
 package hw3.dto.Pet;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -16,7 +14,7 @@ public enum ParrotBreeds {
     NANDAY_CONURE,
     QUACKER_PARAKEET;
 
-    private static final List<ParrotBreeds> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
+    private static final List<ParrotBreeds> VALUES = List.of(values());
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 

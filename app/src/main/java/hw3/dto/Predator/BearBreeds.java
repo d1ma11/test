@@ -1,7 +1,5 @@
 package hw3.dto.Predator;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -12,7 +10,7 @@ public enum BearBreeds {
     POLAR_BEAR,
     PANDA;
 
-    private static final List<BearBreeds> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
+    private static final List<BearBreeds> VALUES = List.of(values());
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 

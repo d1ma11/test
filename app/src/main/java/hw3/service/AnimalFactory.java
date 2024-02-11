@@ -20,6 +20,7 @@ public class AnimalFactory {
 
     /**
      * Создает медведя со случайными параметрами
+     *
      * @return медведь
      */
     public static Animal createBear() {
@@ -33,6 +34,7 @@ public class AnimalFactory {
 
     /**
      * Создает тигра со случайными параметрами
+     *
      * @return тигр
      */
     public static Animal createTiger() {
@@ -46,6 +48,7 @@ public class AnimalFactory {
 
     /**
      * Создает попугая со случайными параметрами
+     *
      * @return попугай
      */
     public static Animal createParrot() {
@@ -59,6 +62,7 @@ public class AnimalFactory {
 
     /**
      * Создает хомяка со случайными параметрами
+     *
      * @return хомяк
      */
     public static Animal createHamster() {

@@ -1,7 +1,5 @@
 package hw3.dto;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
@@ -32,7 +30,7 @@ public enum NamesEnum {
     Cheche,
     Killy;
 
-    private static final List<NamesEnum> VALUES = Collections.unmodifiableList(Arrays.asList(values()));
+    private static final List<NamesEnum> VALUES = List.of(values());
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 

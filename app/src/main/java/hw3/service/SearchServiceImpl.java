@@ -12,6 +12,8 @@ import static hw3.service.helper.SearchUtilityClass.isLeapYear;
 
 public class SearchServiceImpl implements SearchService {
 
+    protected static List<Animal> duplicates = new ArrayList<>();
+
     @Override
     public String[] findLeapYearNames(Animal[] animals) {
         List<String> names = new ArrayList<>();
@@ -43,6 +45,18 @@ public class SearchServiceImpl implements SearchService {
             if (!seenAnimals.add(animal)) {
                 System.out.println("Duplicate animal: " + animal);
             }
+        }
+    }
+
+    public List<Animal> getDuplicates() {
+        return duplicates;
+    }
+
+    public void printDuplicates(Animal[] duplicateAnimals) {
+        findDuplicate(duplicateAnimals);
+
+        for (Animal animal : duplicates) {
+            System.out.println(animal);
         }
     }
 }

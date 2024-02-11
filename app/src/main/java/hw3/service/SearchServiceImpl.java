@@ -1,25 +1,16 @@
 package hw3.service;
 
-import java.time.LocalDate;
-import java.time.Period;
+import hw3.dto.Animal;
+
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import hw3.dto.Animal;
+import static hw3.service.helper.SearchUtilityClass.calculateAge;
+import static hw3.service.helper.SearchUtilityClass.isLeapYear;
 
 public class SearchServiceImpl implements SearchService {
-
-    /**
-     * Проверка года на весокосность
-     *
-     * @param year
-     * @return true - если весокосный, иначе - false
-     */
-    public static boolean isLeapYear(int year) {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
-    }
 
     @Override
     public String[] findLeapYearNames(Animal[] animals) {
@@ -31,16 +22,6 @@ public class SearchServiceImpl implements SearchService {
             }
         }
         return names.toArray(new String[0]);
-    }
-
-    /**
-     * Подсчет возраста животного
-     *
-     * @param birthDate
-     * @return возраст животноого
-     */
-    public static int calculateAge(LocalDate birthDate) {
-        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
     @Override
@@ -64,5 +45,4 @@ public class SearchServiceImpl implements SearchService {
             }
         }
     }
-
 }

@@ -1,23 +1,19 @@
 package hw3.service;
 
+import hw3.dto.Animal;
 import hw3.dto.AnimalsEnum;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
+    /**
+     * Создает 10 уникальных животных случайного типа
+     */
     @Override
-    public void createAnimals(int n) {
-        System.out.println("Using for-loop:");
-        for (int i = 0; i < n; i++) {
-            createAnimal(AnimalsEnum.randomAnimal());
+    public Animal[] createAnimals() {
+        Animal[] animals = new Animal[10];
+        for (int i = 0; i < 10; i++) {
+            animals[i] = createAnimal(AnimalsEnum.randomAnimal());
         }
-    }
-
-    public void createAnimals() {
-        System.out.println("Using do-while loop:");
-        int count = 0;
-        do {
-            createAnimal(AnimalsEnum.randomAnimal());
-            count++;
-        } while (count < 10);
+        return animals;
     }
 }

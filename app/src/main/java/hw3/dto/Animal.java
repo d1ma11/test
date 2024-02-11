@@ -1,6 +1,7 @@
 package hw3.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 public interface Animal {
     /**
@@ -30,4 +31,11 @@ public interface Animal {
      * @return характер животного
      */
     String getCharacter();
+
+    /**
+     * Возвращает день рождения животного
+     *
+     * @return день рождения животного
+     */
+    LocalDate getBirthDate();
 }

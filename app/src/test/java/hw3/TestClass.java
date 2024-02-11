@@ -9,6 +9,7 @@ import hw3.dto.Predator.Bear;
 import hw3.dto.Predator.BearBreeds;
 import hw3.dto.Predator.Tiger;
 import hw3.dto.Predator.TigerBreeds;
+import hw3.service.SearchService;
 import hw3.service.SearchServiceImpl;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class TestClass {
     //Задание 1
     @Nested
-    class EqualsMethodTests {
+    class EqualsMethodTest {
         private static Bear bear_X;
         private static Bear bear_Y;
         private static Bear bear_Z;
@@ -79,6 +80,7 @@ public class TestClass {
         public void equalityNullTest() {
             assertNotEquals(null, bear_X);
         }
+
         @Test
         public void givenTwoDifferentObject_whenTestEquality_thenReturnFalse() {
             assertNotEquals(bear_X, tiger);
@@ -87,8 +89,9 @@ public class TestClass {
 
     //Задания 2, 3, 4
     @Nested
-    class ServiceMethodsTests {
-        private static final SearchServiceImpl service = new SearchServiceImpl();
+    class ServiceMethodsTest {
+        private static final SearchService service = new SearchServiceImpl();
+
         private static Animal[] animals;
         private static Animal[] animalsWithDuplicates;
 

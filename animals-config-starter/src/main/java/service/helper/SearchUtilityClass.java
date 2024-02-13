@@ -1,4 +1,4 @@
-package hw3.service.helper;
+package service.helper;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -8,9 +8,9 @@ public final class SearchUtilityClass {
     private SearchUtilityClass() {}
 
     /**
-     * Проверка года на високосность
+     * Високосный ли год?
      *
-     * @param year
+     * @param year год
      * @return true - если високосный, иначе - false
      */
     public static boolean isLeapYear(int year) {
@@ -20,8 +20,8 @@ public final class SearchUtilityClass {
     /**
      * Возвращает разницу в годах между текущей и переданной даты.
      *
-     * @param birthDate
-     * @return возраст животноого
+     * @param birthDate дата рождения
+     * @return возраст животного
      */
     public static int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();

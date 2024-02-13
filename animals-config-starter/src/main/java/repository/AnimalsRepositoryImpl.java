@@ -5,9 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import service.CreateAnimalService;
 
 import javax.annotation.PostConstruct;
-import java.time.LocalDate;
-import java.time.Period;
 import java.util.*;
+
+import static service.helper.SearchUtilityClass.calculateAge;
+import static service.helper.SearchUtilityClass.isLeapYear;
 
 
 public class AnimalsRepositoryImpl implements AnimalsRepository {
@@ -30,16 +31,6 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         Collections.addAll(animalList, animals);
     }
 
-    /**
-     * Проверка года на весокосность
-     *
-     * @param year год
-     * @return true - если високосный, иначе - false
-     */
-    public static boolean isLeapYear(int year) {
-        return ((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0);
-    }
-
     @Override
     public String[] findLeapYearNames() {
         List<String> names = new ArrayList<>();
@@ -53,16 +44,6 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
             System.out.println("Животных, родившихся в високосный год, нет");
         }
         return names.toArray(new String[0]);
-    }
-
-    /**
-     * Подсчет возраста животного
-     *
-     * @param birthDate день рождения животного
-     * @return возраст животного
-     */
-    public static int calculateAge(LocalDate birthDate) {
-        return Period.between(birthDate, LocalDate.now()).getYears();
     }
 
     @Override

@@ -10,7 +10,7 @@ public class Bear extends Predator {
 
     public Bear(BearBreeds breed, String name, double cost, CharacterEnum character, LocalDate birthDate) {
         this.breed = breed.toString().replace("_", " ");
-        this.name = name.toString();
+        this.name = name;
         this.cost = new BigDecimal(cost).setScale(2, RoundingMode.HALF_UP);
         this.character = character.toString();
         this.birthDate = birthDate;

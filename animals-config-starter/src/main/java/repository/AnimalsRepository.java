@@ -2,7 +2,8 @@ package repository;
 
 import dto.Animal;
 
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.Map;
 
 public interface AnimalsRepository {
     /**
@@ -10,7 +11,7 @@ public interface AnimalsRepository {
      *
      * @return массив животных
      */
-    String[] findLeapYearNames();
+    Map<String, LocalDate> findLeapYearNames();
 
     /**
      * Finds all animals older than N years.
@@ -18,12 +19,12 @@ public interface AnimalsRepository {
      * @param N ограничение по возрасту
      * @return массив животных
      */
-    Animal[] findOlderAnimal(int N);
+    Map<Animal, Integer> findOlderAnimal(int N);
 
     /**
      * Находит дубликаты животных
      */
-    Set<Animal> findDuplicate();
+    Map<String, Integer> findDuplicate();
 
     void printDuplicate();
 }

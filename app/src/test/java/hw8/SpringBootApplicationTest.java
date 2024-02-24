@@ -7,9 +7,11 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
+import service.helper.SearchUtilityClass;
 
+import java.time.LocalDate;
 import java.util.Collections;
-import java.util.Set;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -24,42 +26,82 @@ public class SpringBootApplicationTest {
      */
     @Test
     public void testFindLeapYearNames() {
-        String[] names = animalsRepository.findLeapYearNames();
-        assertThat(names).isNotNull();
-        for (String name : names) {
-            assertThat(!name.isEmpty()).isTrue();
+        Map<String, LocalDate> leapYearNames = animalsRepository.findLeapYearNames();
+
+        assertThat(leapYearNames).isNotNull();
+
+        for (String name : leapYearNames.keySet()) {
+            LocalDate birthDate = leapYearNames.get(name);
+
+            assertThat(SearchUtilityClass.isLeapYear(birthDate.getYear())).isTrue();
         }
+    }
+
+    /**
+     * Проверка, что метод findLeapYearNames() вернет пустой ассоциативный массив,
+     * если он будет работать с пустой коллекцией
+     */
+    @Test
+    public void testFindLeapYearNamesWithEmptyList() {
+        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
+        animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
+
+        Map<String, LocalDate> leapYearNames = animalsRepositoryImpl.findLeapYearNames();
+
+        assertThat(leapYearNames).isEmpty();
     }
 
     /**
      * Проверка, что метод findOlderAnimal() корректно отрабатывает
      */
     @Test
-    public void testFindOlderAnimalWithProperAge() {
-        Animal[] oldAnimals = animalsRepository.findOlderAnimal(10);
-        assertThat(oldAnimals).isNotEmpty();
+    public void testFindOlderAnimal() {
+        int ageThreshold = 10;
+        Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(ageThreshold);
+
+        assertThat(olderAnimals).isNotNull();
     }
 
+
     /**
-     * Проверка, что при значении аргумента метода findOlderAnimal() он возвращает пустой массив, т.к. животных
-     * с таким возрастом не существует
+     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он возвращает пустую коллекцию,
+     * т.к. животных с таким возрастом не существует
      */
     @Test
     public void testFindOlderAnimalWithNegativeAge() {
-        Animal[] oldAnimals = animalsRepository.findOlderAnimal(10);
-        assertThat(oldAnimals).isNotEmpty();
+        int ageThreshold = -50;
+        Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(ageThreshold);
+
+        assertThat(olderAnimals).isEmpty();
     }
 
     /**
-     * Проверка, что при пустом массиве животных в аргументе метода findDuplicate() возвращается пустой массив
+     * Проверка, что метод findDuplicate() корректно отрабатывает
+     */
+    @Test
+    public void testFindDuplicate() {
+        Map<String, Integer> duplicateAnimals = animalsRepository.findDuplicate();
+
+        assertThat(duplicateAnimals).isNotNull();
+
+        for (String animalType : duplicateAnimals.keySet()) {
+            int duplicateCount = duplicateAnimals.get(animalType);
+
+            assertThat(duplicateCount).isGreaterThanOrEqualTo(0);
+        }
+    }
+
+    /**
+     * Проверка, что при пустом массиве животных в аргументе метода findDuplicate() возвращается пустая коллекция
      */
     @Test
     public void testFindDuplicateWithEmptyList() {
-        AnimalsRepositoryImpl animalsRepository = new AnimalsRepositoryImpl();
-        animalsRepository.setAnimalList(Collections.emptyList());
+        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
+        animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
 
-        Set<Animal> result = animalsRepository.findDuplicate();
+        Map<String, Integer> leapYearNames = animalsRepositoryImpl.findDuplicate();
 
-        assertThat(result).isEmpty();
+        assertThat(leapYearNames).isEmpty();
     }
+
 }

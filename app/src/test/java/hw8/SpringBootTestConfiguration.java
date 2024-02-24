@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
-import service.AnimalFactory;
+import service.factory.AnimalFactory;
 import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
 

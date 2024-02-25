@@ -1,20 +1,22 @@
-package autoconfigure;
+package hw8;
 
 import dto.NamesProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
 import service.AnimalFactory;
 import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
-import service.CreateAnimalServicePostProcessor;
 
-@Configuration
-@ConditionalOnClass({AnimalsRepository.class, CreateAnimalServiceImpl.class})
-public class AnimalsConfiguration {
+@SpringBootConfiguration
+public class SpringBootTestConfiguration {
+    @Bean
+    public AnimalsRepository animalsRepository() {
+        return new AnimalsRepositoryImpl();
+    }
+
     @Bean
     public NamesProvider namesProvider() {
         return new NamesProvider();
@@ -30,16 +32,4 @@ public class AnimalsConfiguration {
     public CreateAnimalService createAnimalService(AnimalFactory animalFactory) {
         return new CreateAnimalServiceImpl(animalFactory);
     }
-
-    @Bean
-    @Scope("prototype")
-    public AnimalsRepository animalsRepository() {
-        return new AnimalsRepositoryImpl();
-    }
-
-    @Bean
-    public static CreateAnimalServicePostProcessor createAnimalServicePostProcessor() {
-        return new CreateAnimalServicePostProcessor();
-    }
-
 }

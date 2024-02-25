@@ -51,7 +51,7 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         List<Animal> oldAnimals = new ArrayList<>();
         for (Animal animal : animalList) {
             int age = calculateAge(animal.getBirthDate());
-            if (age > n) {
+            if (age > n && n > 0) {
                 oldAnimals.add(animal);
             }
         }

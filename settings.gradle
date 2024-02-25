@@ -9,3 +9,4 @@
 
 rootProject.name = 'HW'
 include('app')
+include 'animals-config-starter'

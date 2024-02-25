@@ -18,7 +18,7 @@ public class ScheduledTasks {
         this.animalsRepository = animalsRepository;
     }
 
-    @Scheduled(cron = "* * * * * *")
+    @Scheduled(cron = "0 * * * * *")
     public void reportLeapYearAnimals() {
         System.out.println("\n--> Animals that were born in a leap year: ");
         Map<String, LocalDate> leapYearAnimals = animalsRepository.findLeapYearNames();
@@ -27,7 +27,7 @@ public class ScheduledTasks {
         }
     }
 
-//    @Scheduled(cron = "1 * * * * *")
+    @Scheduled(cron = "1 * * * * *")
     public void reportOlderAnimals() {
         int thresholdAge = 30;
         System.out.println("\n--> Animals that are older than " + thresholdAge + " years old: ");
@@ -37,7 +37,7 @@ public class ScheduledTasks {
         }
     }
 
-//    @Scheduled(cron = "2 * * * * *")
+    @Scheduled(cron = "2 * * * * *")
     public void printDuplicateAnimals() {
         System.out.println("\n--> Duplicated animals: ");
         animalsRepository.printDuplicate();

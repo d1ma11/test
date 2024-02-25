@@ -1,6 +1,12 @@
 package hw8;
 
 import dto.Animal;
+import dto.AnimalsEnum;
+import dto.CharacterEnum;
+import dto.Predator.Bear;
+import dto.Predator.BearBreeds;
+import dto.Predator.Tiger;
+import dto.Predator.TigerBreeds;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,9 +17,12 @@ import service.helper.SearchUtilityClass;
 
 import java.time.LocalDate;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 @ActiveProfiles("test")
 @SpringBootTest(classes = SpringBootTestConfiguration.class)
@@ -60,6 +69,32 @@ public class SpringBootApplicationTest {
         Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(ageThreshold);
 
         assertThat(olderAnimals).isNotNull();
+    }
+
+    /**
+     * Проверка, что метод findOlderAnimal() возвращает животного с максимальным возрастом,
+     * когда нет животных, у которых возраст больше переданного параметра
+     */
+    @Test
+    public void testFindOlderAnimal_ReturnsOldestAnimal() {
+        List<Animal> animals = List.of(
+                new Tiger(TigerBreeds.randomBreed(), "Tiger1", 228.68, CharacterEnum.LAZY, LocalDate.of(2020, 1, 1)),
+                new Bear(BearBreeds.randomBreed(), "Bear1", 48.68, CharacterEnum.TRICKY, LocalDate.of(2022, 1, 1)),
+                new Tiger(TigerBreeds.randomBreed(), "Tiger2", 1337.68, CharacterEnum.SMART, LocalDate.of(2021, 1, 1))
+        );
+
+        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
+        // У ключа TIGER значениями будут животные с именами Tiger1, Tiger2
+        // У ключа BEAR значением будет животное с именем Bear1
+        animalsRepositoryImpl.setAnimalMap(Map.of(
+                AnimalsEnum.TIGER.toString(), List.of(animals.get(0), animals.get(2)),
+                AnimalsEnum.BEAR.toString(), List.of(animals.get(1))
+        ));
+
+        Map<Animal, Integer> result = animalsRepositoryImpl.findOlderAnimal(10);
+
+        assertThat(2).isEqualTo(result.size());
+        assertEquals(2, result.get(animals.get(1)));
     }
 
 

@@ -30,7 +30,7 @@ dependencies {
 
 
     testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
-    testImplementation group: 'org.mockito', name: 'mockito-core', version: '2.1.0'
+    testImplementation 'org.mockito:mockito-junit-jupiter:3.12.4'
 }
 
 application {

@@ -33,7 +33,11 @@ public class ScheduledTasks {
         System.out.println("\n--> Animals that are older than " + thresholdAge + " years old: ");
         Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(thresholdAge);
         for (Map.Entry<Animal, Integer> entry : olderAnimals.entrySet()) {
-            System.out.println(entry.getKey().getBreed() + " is " + entry.getValue() + " years old");
+            if (entry.getValue() < thresholdAge) {
+                System.out.println(entry.getKey().getBreed() + " has the maximum age among all the animals on its list: " + entry.getValue() + " years old");
+            } else {
+                System.out.println(entry.getKey().getBreed() + " is " + entry.getValue() + " years old");
+            }
         }
     }
 

@@ -72,7 +72,7 @@ public class AnimalDuplicateFactory {
         String name = "Vasya";
         double cost = 48.48;
         CharacterEnum character = CharacterEnum.LAZY;
-        LocalDate birthDate = LocalDate.of(20012,  2,  3);
+        LocalDate birthDate = LocalDate.of(2012,  2,  3);
         return new Hamster(breed, name, cost, character, birthDate);
     }
 }

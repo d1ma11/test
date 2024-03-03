@@ -3,18 +3,20 @@ package repository;
 import dto.Animal;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Map;
+import java.util.OptionalDouble;
 
 public interface AnimalsRepository {
     /**
-     * Finds all animals born in a leap year.
+     * Находит всех животных, родившихся в високосный год
      *
      * @return массив животных
      */
     Map<String, LocalDate> findLeapYearNames();
 
     /**
-     * Finds all animals older than N years.
+     * Находит всех животных старше N лет
      *
      * @param N ограничение по возрасту
      * @return массив животных
@@ -24,7 +26,33 @@ public interface AnimalsRepository {
     /**
      * Находит дубликаты животных
      */
-    Map<String, Integer> findDuplicate();
+    Map<String, List<Animal>> findDuplicate();
 
     void printDuplicate();
+
+    /**
+     * Находит средний возраст всех животных
+     *
+     * @param animalList список животных
+     * @return средний возраст
+     */
+    OptionalDouble findAverageAge(List<Animal> animalList);
+
+    /**
+     * Находит животных, которые:
+     * - старше 5 лет
+     * - цена больше средней стоимости всех животных
+     *
+     * @param animalList список животных
+     * @return отсортированный по дате рождения (по возрастанию) список животных
+     */
+    List<Animal> findOldAndExpensive(List<Animal> animalList);
+
+    /**
+     * Находит максимум 3 животных с самой низкой ценой
+     *
+     * @param animalList список животных
+     * @return список имен, отсортированный в обратном порядке
+     */
+    List<String> findMinCostAnimals(List<Animal> animalList);
 }

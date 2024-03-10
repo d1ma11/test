@@ -1,7 +1,10 @@
 package service.helper;
 
+import dto.Animal;
+
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 
 public final class SearchUtilityClass {
 
@@ -25,5 +28,29 @@ public final class SearchUtilityClass {
      */
     public static int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
+    }
+
+    /**
+     * Возвращает самого старшего животного из списка
+     *
+     * @param animalList список животных
+     * @return животное
+     */
+    public static Animal findAnimalWithMaxAge(List<Animal> animalList) {
+        if (animalList.isEmpty()) {
+            throw new IllegalArgumentException("Your animal list is empty");
+        }
+        Animal oldestAnimal = animalList.get(0);
+        int maxAge = 0;
+
+        for (Animal animal : animalList) {
+            int currentAnimalAge = calculateAge(animal.getBirthDate());
+
+            if (currentAnimalAge > maxAge) {
+                oldestAnimal = animal;
+                maxAge = currentAnimalAge;
+            }
+        }
+        return oldestAnimal;
     }
 }

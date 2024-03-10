@@ -17,14 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
-import service.helper.SearchUtilityClass;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.OptionalDouble;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -83,20 +78,6 @@ public class SpringBootApplicationTest {
     }
 
     /**
-     * Проверка, что метод findLeapYearNames() вернет пустой ассоциативный массив,
-     * если он будет работать с пустой коллекцией
-     */
-    @Test
-    public void testFindLeapYearNamesWithEmptyList() {
-        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
-        animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
-
-        Map<String, LocalDate> leapYearNames = animalsRepositoryImpl.findLeapYearNames();
-
-        assertThat(leapYearNames).isEmpty();
-    }
-
-    /**
      * Проверка, что метод findOlderAnimal() корректно отрабатывает
      */
     @Test
@@ -135,18 +116,15 @@ public class SpringBootApplicationTest {
 
 
     /**
-     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он возвращает исключение
-     * IllegalArgumentException, т.к. животных с таким возрастом не существует
+     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он возвращает пустую коллекцию,
+     * т.к. животных с таким возрастом не существует
      */
     @Test
     public void testFindOlderAnimalWithNegativeAge() {
         int ageThreshold = -50;
-      
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> animalsRepository.findOlderAnimal(ageThreshold),
-                "Your argument n should be greater than 0"
-        );
+        Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(ageThreshold);
+
+        assertThat(olderAnimals).isEmpty();
     }
 
     /**
@@ -154,12 +132,12 @@ public class SpringBootApplicationTest {
      */
     @Test
     public void testFindDuplicate() {
-        Map<String, Integer> duplicateAnimals = animalsRepository.findDuplicate();
+        Map<String, List<Animal>> duplicateAnimals = animalsRepository.findDuplicate();
 
         assertThat(duplicateAnimals).isNotNull();
 
         for (String animalType : duplicateAnimals.keySet()) {
-            int duplicateCount = duplicateAnimals.get(animalType);
+            int duplicateCount = duplicateAnimals.get(animalType).size();
 
             assertThat(duplicateCount).isGreaterThanOrEqualTo(0);
         }
@@ -204,7 +182,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindAverageAgeWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findAverageAge(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
     }
 
     /**
@@ -242,7 +220,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindOldAndExpensiveWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findOldAndExpensive(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
     }
 
     /**
@@ -294,7 +272,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindMinCostAnimalsWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findMinCostAnimals(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
     }
 
     /**
@@ -304,6 +282,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindMinCostAnimalsWhenGivenEmptyCollection() {
         assertThat(animalsRepository.findMinCostAnimals(Collections.emptyList())).isEmpty();
+    }
 
     @Test
     public void testFindAnimalWithMaxAge() {

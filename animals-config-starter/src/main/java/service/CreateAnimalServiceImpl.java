@@ -2,6 +2,12 @@ package service;
 
 import dto.Animal;
 import dto.AnimalsEnum;
+import service.factory.AnimalFactory;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
     private AnimalsEnum animalType;
@@ -36,11 +42,17 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
      * Создает 10 уникальных животных случайного типа
      */
     @Override
-    public Animal[] createAnimals() {
-        Animal[] animals = new Animal[10];
+    public Map<String, List<Animal>> createAnimals() {
+        Map<String, List<Animal>> animals = new HashMap<>();
+
         for (int i = 0; i < 10; i++) {
             animalType = AnimalsEnum.randomAnimal();
-            animals[i] = createAnimal(animalType);
+            String animalTypeKey = animalType.name();
+            if (!animals.containsKey(animalTypeKey)) {
+                animals.put(animalTypeKey, new ArrayList<>());
+            }
+            Animal newAnimalValue = createAnimal(animalType);
+            animals.get(animalTypeKey).add(newAnimalValue);
         }
         return animals;
     }

@@ -3,6 +3,9 @@ package service;
 import dto.Animal;
 import dto.AnimalsEnum;
 
+import java.util.List;
+import java.util.Map;
+
 public interface CreateAnimalService {
     /**
      * Создает одно уникальное животное случайного типа
@@ -28,7 +31,7 @@ public interface CreateAnimalService {
     Animal createParrot();
     Animal createHamster();
 
-    Animal[] createAnimals();
+    Map<String, List<Animal>> createAnimals();
 
     void setAnimalType(AnimalsEnum animalsEnum);
 }

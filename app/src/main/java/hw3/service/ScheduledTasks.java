@@ -6,6 +6,9 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import repository.AnimalsRepository;
 
+import java.time.LocalDate;
+import java.util.Map;
+
 @Component
 public class ScheduledTasks {
     private final AnimalsRepository animalsRepository;
@@ -17,23 +20,26 @@ public class ScheduledTasks {
 
     @Scheduled(cron = "0 * * * * *")
     public void reportLeapYearAnimals() {
-        System.out.println("\n--> Животные, которые родились в високосный год: ");
-        for (String animal : animalsRepository.findLeapYearNames()) {
-            System.out.println(animal);
+        System.out.println("\n--> Animals that were born in a leap year: ");
+        Map<String, LocalDate> leapYearAnimals = animalsRepository.findLeapYearNames();
+        for (Map.Entry<String, LocalDate> entry : leapYearAnimals.entrySet()) {
+            System.out.println(entry.getKey() + " was born in " + entry.getValue());
         }
     }
 
     @Scheduled(cron = "1 * * * * *")
     public void reportOlderAnimals() {
-        System.out.println("\n--> Животные, которые старше определенного возраста: ");
-        for (Animal animal : animalsRepository.findOlderAnimal(30)) {
-            System.out.println(animal);
+        int thresholdAge = 30;
+        System.out.println("\n--> Animals that are older than " + thresholdAge + " years old: ");
+        Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(thresholdAge);
+        for (Map.Entry<Animal, Integer> entry : olderAnimals.entrySet()) {
+            System.out.println(entry.getKey().getBreed() + " is " + entry.getValue() + " years old");
         }
     }
 
     @Scheduled(cron = "2 * * * * *")
     public void printDuplicateAnimals() {
-        System.out.println("\n--> Дубликаты животных: ");
+        System.out.println("\n--> Duplicated animals: ");
         animalsRepository.printDuplicate();
     }
 }

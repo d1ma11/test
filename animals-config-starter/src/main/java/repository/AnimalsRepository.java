@@ -7,14 +7,14 @@ import java.util.Map;
 
 public interface AnimalsRepository {
     /**
-     * Finds all animals born in a leap year.
+     * Находит всех животных, родившихся в високосный год
      *
      * @return массив животных
      */
     Map<String, LocalDate> findLeapYearNames();
 
     /**
-     * Finds all animals older than N years.
+     * Находит всех животных старше N лет
      *
      * @param N ограничение по возрасту
      * @return массив животных

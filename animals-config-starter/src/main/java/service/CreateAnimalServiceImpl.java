@@ -47,7 +47,7 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
 
         for (int i = 0; i < 10; i++) {
             animalType = AnimalsEnum.randomAnimal();
-            String animalTypeKey = animalType.toString();
+            String animalTypeKey = animalType.name();
             if (!animals.containsKey(animalTypeKey)) {
                 animals.put(animalTypeKey, new ArrayList<>());
             }

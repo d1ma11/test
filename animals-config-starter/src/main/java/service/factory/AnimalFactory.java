@@ -105,5 +105,4 @@ public class AnimalFactory {
             return new Hamster(breed, name, cost, character, birthDate);
         }
     }
-
 }

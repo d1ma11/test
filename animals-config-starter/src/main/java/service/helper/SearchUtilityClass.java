@@ -37,6 +37,9 @@ public final class SearchUtilityClass {
      * @return животное
      */
     public static Animal findAnimalWithMaxAge(List<Animal> animalList) {
+        if (animalList.isEmpty()) {
+            throw new IllegalArgumentException("Your animal list is empty");
+        }
         Animal oldestAnimal = animalList.get(0);
         int maxAge = 0;
 

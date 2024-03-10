@@ -17,12 +17,14 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
+import service.helper.SearchUtilityClass;
 
 import java.time.LocalDate;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
+import java.util.OptionalDouble;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -64,6 +66,20 @@ public class SpringBootApplicationTest {
         ));
 
         assertThat(leapYearNames).isEqualTo(expected);
+    }
+
+    /**
+     * Проверка, что метод findLeapYearNames() вернет пустой ассоциативный массив,
+     * если он будет работать с пустой коллекцией
+     */
+    @Test
+    public void testFindLeapYearNamesWithEmptyList() {
+        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
+        animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
+
+        Map<String, LocalDate> leapYearNames = animalsRepositoryImpl.findLeapYearNames();
+
+        assertThat(leapYearNames).isEmpty();
     }
 
     /**
@@ -125,7 +141,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindOlderAnimalWithNegativeAge() {
         int ageThreshold = -50;
-
+      
         assertThrows(
                 IllegalArgumentException.class,
                 () -> animalsRepository.findOlderAnimal(ageThreshold),
@@ -157,10 +173,137 @@ public class SpringBootApplicationTest {
         AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
         animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
 
-        Map<String, Integer> leapYearNames = animalsRepositoryImpl.findDuplicate();
+        Map<String, List<Animal>> leapYearNames = animalsRepositoryImpl.findDuplicate();
 
         assertThat(leapYearNames).isEmpty();
     }
+
+    /**
+     * Проверка, что метод findAverageAge() корректно отрабатывает
+     */
+    @Test
+    public void testFindAverageAge() {
+        List<Animal> animalList = List.of(
+                new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 50, CharacterEnum.TALKATIVE, LocalDate.of(2000, 12, 17)),
+                new Bear(BearBreeds.POLAR_BEAR, "Nil", 100, CharacterEnum.KIND, LocalDate.of(2000, 12, 3)),
+                new Parrot(ParrotBreeds.COCKATOOS_PARROT, "Leo", 150, CharacterEnum.SMART, LocalDate.of(2000, 12, 8)),
+                new Hamster(HamsterBreeds.SYRIAN_HAMSTER, "Bob", 200, CharacterEnum.WICKED, LocalDate.of(2000, 12, 11))
+        );
+
+        OptionalDouble avgAge = animalsRepository.findAverageAge(animalList);
+
+        assertThat(avgAge).isNotEqualTo(0);
+        avgAge.ifPresent(age -> assertThat(age).isEqualTo(23));
+    }
+
+    /**
+     * Проверка, что метод findAverageAge() при использовании null в качестве аргумента
+     * выбрасывает исключение NullPointerException и выводит следующее сообщение:
+     * "Your animal list should not be null
+     */
+    @Test
+    public void testFindAverageAgeWhenGivenNull() {
+        var message = assertThrows(NullPointerException.class, () -> animalsRepository.findAverageAge(null));
+        assertEquals("Your animal list should not be null", message.getMessage());
+    }
+
+    /**
+     * Проверка, что метод findAverageAge() при использовании пустого списка в качестве аргумента
+     * возвращает пустой список
+     */
+    @Test
+    public void testFindAverageAgeWhenGiverEmptyCollection() {
+        assertThat(animalsRepository.findAverageAge(Collections.emptyList())).isEmpty();
+    }
+
+    /**
+     * Проверка, что метод findFindOldAndExpensive() корректно отрабатывает
+     */
+    @Test
+    public void testFindOldAndExpensive() {
+        List<Animal> animalList = List.of(
+                new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17)),
+                new Bear(BearBreeds.POLAR_BEAR, "Nil", 500, CharacterEnum.KIND, LocalDate.of(2003, 12, 3)),
+                new Parrot(ParrotBreeds.COCKATOOS_PARROT, "Leo", 100, CharacterEnum.SMART, LocalDate.of(2021, 12, 8)),
+                new Hamster(HamsterBreeds.SYRIAN_HAMSTER, "Bob", 400, CharacterEnum.WICKED, LocalDate.of(2013, 12, 11))
+        );
+
+        List<Animal> result = animalsRepository.findOldAndExpensive(animalList);
+
+        assertThat(result).isNotEmpty();
+        assertThat(result.size()).isEqualTo(3);
+    }
+
+    /**
+     * Проверка, что метод findFindOldAndExpensive() при использовании null в качестве аргумента
+     * выбрасывает исключение NullPointerException и выводит следующее сообщение:
+     * "Your animal list should not be null
+     */
+    @Test
+    public void testFindOldAndExpensiveWhenGivenNull() {
+        var message = assertThrows(NullPointerException.class, () -> animalsRepository.findOldAndExpensive(null));
+        assertEquals("Your animal list should not be null", message.getMessage());
+    }
+
+    /**
+     * Проверка, что метод findFindOldAndExpensive() при использовании пустого списка в качестве аргумента
+     * возвращает пустой список
+     */
+    @Test
+    public void testFindOldAndExpensiveWhenGivenEmptyCollection() {
+        assertThat(animalsRepository.findOldAndExpensive(Collections.emptyList())).isEmpty();
+    }
+
+    /**
+     * Проверка, что метод findMinCostAnimals() корректно отрабатывает
+     */
+    @Test
+    public void testFindMinCostAnimals() {
+        List<Animal> animalList = List.of(
+                new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17)),
+                new Bear(BearBreeds.POLAR_BEAR, "Nil", 500, CharacterEnum.KIND, LocalDate.of(2003, 12, 3)),
+                new Parrot(ParrotBreeds.COCKATOOS_PARROT, "Leo", 100, CharacterEnum.SMART, LocalDate.of(2021, 12, 8)),
+                new Hamster(HamsterBreeds.SYRIAN_HAMSTER, "Bob", 400, CharacterEnum.WICKED, LocalDate.of(2013, 12, 11))
+        );
+
+        List<String> result = animalsRepository.findMinCostAnimals(animalList);
+
+        assertThat(result.size()).isEqualTo(3);
+    }
+
+    /**
+     * Проверка, что метод findMinCostAnimals() при использовании списка из одного животного в качестве аргумента
+     * возвращает список из одного имени этого животного
+     */
+    @Test
+    public void testFindMinCostAnimalsWhenGivenOneAnimal() {
+        List<Animal> animalList = List.of(
+                new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17))
+        );
+
+        List<String> result = animalsRepository.findMinCostAnimals(animalList);
+
+        assertThat(result.size()).isEqualTo(1);
+    }
+
+    /**
+     * Проверка, что метод findFindOldAndExpensive() при использовании null в качестве аргумента
+     * выбрасывает исключение NullPointerException и выводит следующее сообщение:
+     * "Your animal list should not be null
+     */
+    @Test
+    public void testFindMinCostAnimalsWhenGivenNull() {
+        var message = assertThrows(NullPointerException.class, () -> animalsRepository.findMinCostAnimals(null));
+        assertEquals("Your animal list should not be null", message.getMessage());
+    }
+
+    /**
+     * Проверка, что метод findMinCostAnimals() при использовании пустого списка в качестве аргумента
+     * возвращает пустой список
+     */
+    @Test
+    public void testFindMinCostAnimalsWhenGivenEmptyCollection() {
+        assertThat(animalsRepository.findMinCostAnimals(Collections.emptyList())).isEmpty();
 
     @Test
     public void testFindAnimalWithMaxAge() {

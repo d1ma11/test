@@ -5,9 +5,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.annotation.ScopedProxyMode;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
-import service.AnimalFactory;
+import service.factory.AnimalFactory;
 import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
 import service.CreateAnimalServicePostProcessor;
@@ -26,13 +27,13 @@ public class AnimalsConfiguration {
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
     public CreateAnimalService createAnimalService(AnimalFactory animalFactory) {
         return new CreateAnimalServiceImpl(animalFactory);
     }
 
     @Bean
-    @Scope("prototype")
+    @Scope(value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
     public AnimalsRepository animalsRepository() {
         return new AnimalsRepositoryImpl();
     }

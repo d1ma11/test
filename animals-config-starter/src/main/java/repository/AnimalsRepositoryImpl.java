@@ -1,84 +1,146 @@
 package repository;
 
 import dto.Animal;
+import dto.AnimalsEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.CreateAnimalService;
 
 import javax.annotation.PostConstruct;
+import java.time.LocalDate;
 import java.util.*;
 
-import static service.helper.SearchUtilityClass.calculateAge;
-import static service.helper.SearchUtilityClass.isLeapYear;
+import static service.helper.SearchUtilityClass.*;
 
 
 public class AnimalsRepositoryImpl implements AnimalsRepository {
-    private List<Animal> animalList = new ArrayList<>();
+    private Map<String, List<Animal>> animalMap = new HashMap<>();
 
     @Autowired
     private CreateAnimalService createAnimalService;
 
-    public List<Animal> getAnimalList() {
-        return animalList;
-    }
-
-    public void setAnimalList(List<Animal> animalList) {
-        this.animalList = animalList;
-    }
-
     @PostConstruct
     public void init() {
-        Animal[] animals = createAnimalService.createAnimals();
-        Collections.addAll(animalList, animals);
+        animalMap = createAnimalService.createAnimals();
+    }
+
+    public Map<String, List<Animal>> getAnimalMap() {
+        return animalMap;
+    }
+
+    public void setAnimalMap(Map<String, List<Animal>> animalMap) {
+        this.animalMap = animalMap;
     }
 
     @Override
-    public String[] findLeapYearNames() {
-        List<String> names = new ArrayList<>();
-        for (Animal animal : animalList) {
-            int birthYear = animal.getBirthDate().getYear();
-            if (isLeapYear(birthYear)) {
-                names.add(animal.getName());
-            }
+    public Map<String, LocalDate> findLeapYearNames() {
+        Map<String, LocalDate> animalsBornInLeapYear = new HashMap<>();
+
+        for (AnimalsEnum animalType : AnimalsEnum.values()) {
+            putAnimalsBornInLeapYear(animalType, animalsBornInLeapYear);
         }
-        if (names.isEmpty()) {
-            System.out.println("Животных, родившихся в високосный год, нет");
-        }
-        return names.toArray(new String[0]);
+
+        return animalsBornInLeapYear;
     }
 
     @Override
-    public Animal[] findOlderAnimal(int n) {
-        List<Animal> oldAnimals = new ArrayList<>();
-        for (Animal animal : animalList) {
-            int age = calculateAge(animal.getBirthDate());
-            if (age > n && n > 0) {
-                oldAnimals.add(animal);
-            }
+    public Map<Animal, Integer> findOlderAnimal(int n) {
+        if (n <= 0) {
+            throw new IllegalArgumentException("Your argument n should be greater than 0");
         }
-        if (oldAnimals.isEmpty()) {
-            System.out.println("Животных старше " + n + " лет нет");
+        Map<Animal, Integer> olderAnimals = new HashMap<>();
+
+        for (AnimalsEnum animalType : AnimalsEnum.values()) {
+            putOldAnimal(animalType, olderAnimals, n);
         }
-        return oldAnimals.toArray(new Animal[0]);
+
+        return olderAnimals;
     }
 
     @Override
-    public Set<Animal> findDuplicate() {
-        Set<Animal> duplicatedAnimals = new HashSet<>();
-        for (Animal animal : animalList) {
-            if (duplicatedAnimals.add(animal)) {
-                duplicatedAnimals.remove(animal);
-            }
+    public Map<String, Integer> findDuplicate() {
+        Map<String, Integer> duplicateAnimals = new HashMap<>();
+
+        for (AnimalsEnum animalType : AnimalsEnum.values()) {
+            countDuplicateAnimals(animalType, duplicateAnimals);
         }
-        return duplicatedAnimals;
+
+        return duplicateAnimals;
     }
 
     @Override
     public void printDuplicate() {
-        if (findDuplicate().isEmpty()) {
-            System.out.println("Дубликатов животных нет");
+        Map<String, Integer> duplicateAnimals = findDuplicate();
+
+        for (String animalType : duplicateAnimals.keySet()) {
+            int duplicateCount = duplicateAnimals.get(animalType);
+            if (duplicateCount == 0) {
+                System.out.println("There are no duplicated animals with type " + animalType);
+            } else {
+                System.out.println("Type " + animalType + " has " + duplicateCount + " duplications");
+            }
         }
-        for (Animal animal : findDuplicate()) {
-            System.out.println(animal);
+    }
+
+    private List<Animal> getAnimalListByAnimalType(AnimalsEnum animalType) {
+        return animalMap.getOrDefault(animalType.name(), Collections.emptyList());
+    }
+
+    private void putAnimalsBornInLeapYear(AnimalsEnum animalType, Map<String, LocalDate> animalsBornInLeapYear) {
+        List<Animal> animalList = getAnimalListByAnimalType(animalType);
+        boolean putAtLeastOneAnimal = false;
+
+        if (animalList.isEmpty()) {
+            System.out.println("No animals with type " + animalType + " were generated");
+            return;
         }
+
+        for (Animal animal : animalList) {
+            LocalDate birthYear = animal.getBirthDate();
+            if (isLeapYear(birthYear.getYear())) {
+                animalsBornInLeapYear.put(animalType + " " + animal.getName(), birthYear);
+                putAtLeastOneAnimal = true;
+            }
+        }
+
+        if (!putAtLeastOneAnimal) {
+            System.out.println("No animals with type " + animalType + " were born in leap year");
+        }
+    }
+
+    private void putOldAnimal(AnimalsEnum animalType, Map<Animal, Integer> olderAnimals, int n) {
+        List<Animal> animalList = getAnimalListByAnimalType(animalType);
+
+        if (animalList.isEmpty()) {
+            System.out.println("No animals with type " + animalType + " were generated");
+            return;
+        }
+
+        Animal oldestAnimal = findAnimalWithMaxAge(animalList);
+        int maxAge = calculateAge(oldestAnimal.getBirthDate());
+
+        if (maxAge < n) {
+            olderAnimals.put(oldestAnimal, maxAge);
+        } else {
+            for (Animal animal : animalList) {
+                int age = calculateAge(animal.getBirthDate());
+
+                if (age > n) {
+                    olderAnimals.put(animal, age);
+                }
+            }
+        }
+
+    }
+
+    private void countDuplicateAnimals(AnimalsEnum animalType, Map<String, Integer> duplicateAnimals) {
+        List<Animal> animalList = getAnimalListByAnimalType(animalType);
+
+        if (animalList.isEmpty()) {
+            System.out.println("No animals with type " + animalType + " were generated");
+            return;
+        }
+
+        Set<Animal> animalSet = new HashSet<>(animalList);
+        duplicateAnimals.put(animalType.toString(), animalList.size() - animalSet.size());
     }
 }

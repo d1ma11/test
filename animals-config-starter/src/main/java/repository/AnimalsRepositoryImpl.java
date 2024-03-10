@@ -1,6 +1,7 @@
 package repository;
 
 import dto.Animal;
+import dto.AnimalsEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.CreateAnimalService;
 import service.helper.UtilityClass;
@@ -13,7 +14,6 @@ import java.util.stream.Collectors;
 
 import static service.helper.SearchUtilityClass.*;
 import static service.helper.UtilityClass.getAnimalType;
-
 
 public class AnimalsRepositoryImpl implements AnimalsRepository {
     private Map<String, List<Animal>> animalMap = new HashMap<>();

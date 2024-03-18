@@ -11,6 +11,8 @@ import dto.Predator.Bear;
 import dto.Predator.BearBreeds;
 import dto.Predator.Tiger;
 import dto.Predator.TigerBreeds;
+import exception.NegativeAgeParameterException;
+import exception.SmallListSizeException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -116,15 +118,18 @@ public class SpringBootApplicationTest {
 
 
     /**
-     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он возвращает пустую коллекцию,
-     * т.к. животных с таким возрастом не существует
+     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он выбрасывает
+     * исключение NegativeAgeParameterException
      */
     @Test
     public void testFindOlderAnimalWithNegativeAge() {
         int ageThreshold = -50;
-        Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(ageThreshold);
 
-        assertThat(olderAnimals).isEmpty();
+        assertThrows(
+                NegativeAgeParameterException.class,
+                () -> animalsRepository.findOlderAnimal(ageThreshold),
+                "Age parameter \"n\" should be greater or equals to 0"
+        );
     }
 
     /**
@@ -251,7 +256,7 @@ public class SpringBootApplicationTest {
 
     /**
      * Проверка, что метод findMinCostAnimals() при использовании списка из одного животного в качестве аргумента
-     * возвращает список из одного имени этого животного
+     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше 3
      */
     @Test
     public void testFindMinCostAnimalsWhenGivenOneAnimal() {
@@ -259,9 +264,11 @@ public class SpringBootApplicationTest {
                 new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17))
         );
 
-        List<String> result = animalsRepository.findMinCostAnimals(animalList);
-
-        assertThat(result.size()).isEqualTo(1);
+        assertThrows(
+                SmallListSizeException.class,
+                () -> animalsRepository.findMinCostAnimals(animalList),
+                "Animal list must contain at least 3 animals"
+        );
     }
 
     /**
@@ -277,11 +284,17 @@ public class SpringBootApplicationTest {
 
     /**
      * Проверка, что метод findMinCostAnimals() при использовании пустого списка в качестве аргумента
-     * возвращает пустой список
+     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше 3
      */
     @Test
     public void testFindMinCostAnimalsWhenGivenEmptyCollection() {
-        assertThat(animalsRepository.findMinCostAnimals(Collections.emptyList())).isEmpty();
+        List<Animal> animalList = Collections.emptyList();
+
+        assertThrows(
+                SmallListSizeException.class,
+                () -> animalsRepository.findMinCostAnimals(animalList),
+                "Animal list must contain at least 3 animals"
+        );
     }
 
     @Test

@@ -10,6 +10,7 @@ import service.helper.UtilityClass;
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,14 +18,17 @@ import static service.helper.SearchUtilityClass.*;
 import static service.helper.UtilityClass.getAnimalType;
 
 public class AnimalsRepositoryImpl implements AnimalsRepository {
-    private Map<String, List<Animal>> animalMap = new HashMap<>();
+    private Map<String, List<Animal>> animalMap = new ConcurrentHashMap<>();
 
     @Autowired
     private CreateAnimalService createAnimalService;
 
     @PostConstruct
     public void init() {
-        animalMap = createAnimalService.createAnimals();
+        Map<String, List<Animal>> tempAnimalMap = createAnimalService.createAnimals();
+        tempAnimalMap.forEach((key, value) -> {
+            animalMap.put(key, Collections.synchronizedList(value));
+        });
     }
 
     public Map<String, List<Animal>> getAnimalMap() {

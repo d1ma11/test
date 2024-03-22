@@ -10,9 +10,12 @@ import java.util.List;
 import java.util.Map;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
-    private AnimalsEnum animalType;
+
+    private final int animalsCountToCreate = 20;
 
     private final AnimalFactory animalFactory;
+
+    private AnimalsEnum animalType;
 
     public CreateAnimalServiceImpl(AnimalFactory animalFactory) {
         this.animalFactory = animalFactory;
@@ -39,13 +42,13 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
     }
 
     /**
-     * Создает 10 уникальных животных случайного типа
+     * Создает 20 уникальных животных случайного типа
      */
     @Override
     public Map<String, List<Animal>> createAnimals() {
         Map<String, List<Animal>> animals = new HashMap<>();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < animalsCountToCreate; i++) {
             animalType = AnimalsEnum.randomAnimal();
             String animalTypeKey = animalType.name();
             if (!animals.containsKey(animalTypeKey)) {

@@ -1,63 +1,79 @@
 package hw3.service;
 
 import dto.Animal;
-import exception.NegativeAgeParameterException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import repository.AnimalsRepository;
+import repository.AnimalsRepositoryImpl;
 
-import java.time.LocalDate;
-import java.util.Map;
+import javax.annotation.PostConstruct;
+import java.util.List;
+import java.util.OptionalDouble;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static service.helper.UtilityClass.getAnimalType;
 
 @Component
 public class ScheduledTasks {
-    private final AnimalsRepository animalsRepository;
+    public static final String ANSI_RESET = "\u001B[0m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_CYAN = "\033[0;36m";
+
+    private final AnimalsRepositoryImpl animalsRepositoryImpl;
 
     @Autowired
-    public ScheduledTasks(AnimalsRepository animalsRepository) {
-        this.animalsRepository = animalsRepository;
+    public ScheduledTasks(AnimalsRepositoryImpl animalsRepositoryImpl) {
+        this.animalsRepositoryImpl = animalsRepositoryImpl;
     }
 
-    @Scheduled(cron = "0 * * * * *")
-    public void reportLeapYearAnimals() {
-        try {
-            System.out.println("\n--> Animals that were born in a leap year: ");
-            Map<String, LocalDate> leapYearAnimals = animalsRepository.findLeapYearNames();
+    @PostConstruct
+    public void init() {
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
 
-            for (Map.Entry<String, LocalDate> entry : leapYearAnimals.entrySet()) {
-                System.out.println(entry.getKey() + " was born in " + entry.getValue());
-            }
-        } catch (NullPointerException e) {
-            System.out.println(e.getMessage());
-        }
+        executor.scheduleAtFixedRate(() -> {
+            Thread.currentThread().setName("DuplicatePrinter");
+            logPrintDuplicateMethod();
+        }, 1, 10, TimeUnit.SECONDS);
+
+        executor.scheduleAtFixedRate(() -> {
+            Thread.currentThread().setName("AverageAgeCalculator");
+            logFindAverageAgeMethod();
+        }, 2, 20, TimeUnit.SECONDS);
     }
 
-    @Scheduled(cron = "1 * * * * *")
-    public void reportOlderAnimals() {
-        try {
-            int thresholdAge = 30;
-            System.out.println("\n--> Animals that are older than " + thresholdAge + " years old: ");
-            Map<Animal, Integer> olderAnimals = animalsRepository.findOlderAnimal(thresholdAge);
-            for (Map.Entry<Animal, Integer> entry : olderAnimals.entrySet()) {
-                if (entry.getValue() < thresholdAge) {
-                    System.out.println(entry.getKey().getBreed() + " has the maximum age among all the animals on its list: " + entry.getValue() + " years old");
-                } else {
-                    System.out.println(entry.getKey().getBreed() + " is " + entry.getValue() + " years old");
-                }
-            }
-        } catch (NegativeAgeParameterException | NullPointerException e) {
-            System.out.println(e.getMessage());
-        }
+    /**
+     * Логирование работы потока с методом printDuplicate() синим цветом
+     */
+    private void logPrintDuplicateMethod() {
+        System.out.println(
+                ANSI_BLUE +
+                        "\n1. Thread: " + Thread.currentThread().getName() +
+                        " - executing method printDuplicate()"
+        );
+
+        animalsRepositoryImpl.printDuplicate();
+
+        System.out.print(ANSI_RESET);
     }
 
-    @Scheduled(cron = "2 * * * * *")
-    public void printDuplicateAnimals() {
-        try {
-            System.out.println("\n--> Duplicated animals: ");
-            animalsRepository.printDuplicate();
-        } catch (NullPointerException e) {
-            System.out.println(e.getMessage());
+    /**
+     * Логирование работы потока с методом finaAverageAge() голубым цветом
+     */
+    private void logFindAverageAgeMethod() {
+        System.out.println(
+                ANSI_CYAN +
+                        "2. Thread: " + Thread.currentThread().getName() +
+                        " - executing method findAverageAge()"
+        );
+
+        for (List<Animal> animalList : animalsRepositoryImpl.getAnimalMap().values()) {
+            OptionalDouble averageAge = animalsRepositoryImpl.findAverageAge(animalList);
+
+            System.out.println("Average age of " + getAnimalType(animalList.get(0)) + " is " +
+                    Math.round(averageAge.isPresent() ? averageAge.getAsDouble() : 0));
         }
+
+        System.out.println(ANSI_RESET);
     }
 }

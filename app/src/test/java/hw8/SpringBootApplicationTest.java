@@ -33,6 +33,9 @@ public class SpringBootApplicationTest {
     @Autowired
     private AnimalsRepository animalsRepository;
 
+    private static final String NULL_ANIMAL_LIST_MESSAGE = "Your animal list should not be null";
+    private static final int minListSize = 3;
+
     /**
      * Проверка, что метод findLeapYearNames() корректно отрабатывает
      */
@@ -187,7 +190,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindAverageAgeWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findAverageAge(null));
-        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
@@ -225,7 +228,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindOldAndExpensiveWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findOldAndExpensive(null));
-        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
@@ -241,7 +244,7 @@ public class SpringBootApplicationTest {
      * Проверка, что метод findMinCostAnimals() корректно отрабатывает
      */
     @Test
-    public void testFindMinCostAnimals() {
+    public void testFindMinCostAnimals() throws SmallListSizeException {
         List<Animal> animalList = List.of(
                 new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17)),
                 new Bear(BearBreeds.POLAR_BEAR, "Nil", 500, CharacterEnum.KIND, LocalDate.of(2003, 12, 3)),
@@ -256,7 +259,8 @@ public class SpringBootApplicationTest {
 
     /**
      * Проверка, что метод findMinCostAnimals() при использовании списка из одного животного в качестве аргумента
-     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше 3
+     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше минимального необходимого для проведения
+     * операции
      */
     @Test
     public void testFindMinCostAnimalsWhenGivenOneAnimal() {
@@ -267,7 +271,7 @@ public class SpringBootApplicationTest {
         assertThrows(
                 SmallListSizeException.class,
                 () -> animalsRepository.findMinCostAnimals(animalList),
-                "Animal list must contain at least 3 animals"
+                "Animal list must contain at least " + minListSize + " animals"
         );
     }
 
@@ -279,7 +283,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindMinCostAnimalsWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findMinCostAnimals(null));
-        assertThat("Your animal list should not be null").isEqualTo(message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
@@ -293,7 +297,7 @@ public class SpringBootApplicationTest {
         assertThrows(
                 SmallListSizeException.class,
                 () -> animalsRepository.findMinCostAnimals(animalList),
-                "Animal list must contain at least 3 animals"
+                "Animal list must contain at least " + minListSize + " animals"
         );
     }
 

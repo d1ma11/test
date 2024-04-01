@@ -9,10 +9,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static service.helper.UtilityClass.logAnimalDetails;
+
 public class CreateAnimalServiceImpl implements CreateAnimalService {
-    private AnimalsEnum animalType;
 
     private final AnimalFactory animalFactory;
+
+    private AnimalsEnum animalType;
 
     public CreateAnimalServiceImpl(AnimalFactory animalFactory) {
         this.animalFactory = animalFactory;
@@ -39,7 +42,7 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
     }
 
     /**
-     * Создает 10 уникальных животных случайного типа
+     * Создает 20 уникальных животных случайного типа
      */
     @Override
     public Map<String, List<Animal>> createAnimals() {
@@ -53,6 +56,8 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
             }
             Animal newAnimalValue = createAnimal(animalType);
             animals.get(animalTypeKey).add(newAnimalValue);
+
+            logAnimalDetails(newAnimalValue);
         }
         return animals;
     }

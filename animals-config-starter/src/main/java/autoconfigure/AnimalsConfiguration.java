@@ -1,17 +1,17 @@
 package autoconfigure;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dto.NamesProvider;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.context.annotation.ScopedProxyMode;
+import org.springframework.context.annotation.*;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
 import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
 import service.CreateAnimalServicePostProcessor;
 import service.factory.AnimalFactory;
+import service.helper.JsonHelper;
 
 @Configuration
 @ConditionalOnClass({AnimalsRepository.class, CreateAnimalServiceImpl.class})
@@ -47,5 +47,18 @@ public class AnimalsConfiguration {
     @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
     public AnimalsRepositoryImpl animalsRepositoryImpl() {
         return new AnimalsRepositoryImpl();
+    }
+
+    @Bean
+    @Primary
+    public ObjectMapper objectMapper() {
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        return objectMapper;
+    }
+
+    @Bean
+    public JsonHelper jsonHelper() {
+        return new JsonHelper(objectMapper());
     }
 }

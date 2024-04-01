@@ -18,6 +18,15 @@ public enum ParrotBreeds {
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 
+    public static ParrotBreeds forName(String name) {
+        for (ParrotBreeds value : VALUES) {
+            if (value.name().replace("_", " ").equals(name)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static ParrotBreeds randomBreed() {
         return VALUES.get(RANDOM.nextInt(SIZE));
     }

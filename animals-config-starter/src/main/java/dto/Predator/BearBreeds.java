@@ -14,6 +14,15 @@ public enum BearBreeds {
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 
+    public static BearBreeds forName(String name) {
+        for (BearBreeds value : VALUES) {
+            if (value.name().replace("_", " ").equals(name)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static BearBreeds randomBreed() {
         return VALUES.get(RANDOM.nextInt(SIZE));
     }

@@ -241,7 +241,7 @@ public class SpringBootApplicationTest {
      * Проверка, что метод findMinCostAnimals() корректно отрабатывает
      */
     @Test
-    public void testFindMinCostAnimals() {
+    public void testFindMinCostAnimals() throws SmallListSizeException {
         List<Animal> animalList = List.of(
                 new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17)),
                 new Bear(BearBreeds.POLAR_BEAR, "Nil", 500, CharacterEnum.KIND, LocalDate.of(2003, 12, 3)),

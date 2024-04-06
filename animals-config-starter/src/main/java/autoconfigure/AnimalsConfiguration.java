@@ -8,10 +8,10 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
-import service.factory.AnimalFactory;
 import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
 import service.CreateAnimalServicePostProcessor;
+import service.factory.AnimalFactory;
 
 @Configuration
 @ConditionalOnClass({AnimalsRepository.class, CreateAnimalServiceImpl.class})
@@ -43,4 +43,9 @@ public class AnimalsConfiguration {
         return new CreateAnimalServicePostProcessor();
     }
 
+    @Bean
+    @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
+    public AnimalsRepositoryImpl animalsRepositoryImpl() {
+        return new AnimalsRepositoryImpl();
+    }
 }

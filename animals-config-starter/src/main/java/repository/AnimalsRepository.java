@@ -1,6 +1,7 @@
 package repository;
 
 import dto.Animal;
+import exception.SmallListSizeException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -53,6 +54,7 @@ public interface AnimalsRepository {
      *
      * @param animalList список животных
      * @return список имен, отсортированный в обратном порядке
+     * @throws SmallListSizeException если размер списка animalList меньше, чем 3
      */
-    List<String> findMinCostAnimals(List<Animal> animalList);
+    List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException;
 }

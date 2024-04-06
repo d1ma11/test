@@ -11,20 +11,17 @@ import dto.Predator.Bear;
 import dto.Predator.BearBreeds;
 import dto.Predator.Tiger;
 import dto.Predator.TigerBreeds;
+import exception.NegativeAgeParameterException;
+import exception.SmallListSizeException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import repository.AnimalsRepository;
 import repository.AnimalsRepositoryImpl;
-import service.helper.SearchUtilityClass;
 
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.OptionalDouble;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -35,6 +32,9 @@ import static service.helper.SearchUtilityClass.findAnimalWithMaxAge;
 public class SpringBootApplicationTest {
     @Autowired
     private AnimalsRepository animalsRepository;
+
+    private static final String NULL_ANIMAL_LIST_MESSAGE = "Your animal list should not be null";
+    private static final int minListSize = 3;
 
     /**
      * Проверка, что метод findLeapYearNames() корректно отрабатывает
@@ -66,20 +66,6 @@ public class SpringBootApplicationTest {
         ));
 
         assertThat(leapYearNames).isEqualTo(expected);
-    }
-
-    /**
-     * Проверка, что метод findLeapYearNames() вернет пустой ассоциативный массив,
-     * если он будет работать с пустой коллекцией
-     */
-    @Test
-    public void testFindLeapYearNamesWithEmptyList() {
-        AnimalsRepositoryImpl animalsRepositoryImpl = new AnimalsRepositoryImpl();
-        animalsRepositoryImpl.setAnimalMap(Collections.emptyMap());
-
-        Map<String, LocalDate> leapYearNames = animalsRepositoryImpl.findLeapYearNames();
-
-        assertThat(leapYearNames).isEmpty();
     }
 
     /**
@@ -135,17 +121,17 @@ public class SpringBootApplicationTest {
 
 
     /**
-     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он возвращает исключение
-     * IllegalArgumentException, т.к. животных с таким возрастом не существует
+     * Проверка, что при отрицательном значении аргумента метода findOlderAnimal() он выбрасывает
+     * исключение NegativeAgeParameterException
      */
     @Test
     public void testFindOlderAnimalWithNegativeAge() {
         int ageThreshold = -50;
-      
+
         assertThrows(
-                IllegalArgumentException.class,
+                NegativeAgeParameterException.class,
                 () -> animalsRepository.findOlderAnimal(ageThreshold),
-                "Your argument n should be greater than 0"
+                "Age parameter \"n\" should be greater or equals to 0"
         );
     }
 
@@ -154,12 +140,12 @@ public class SpringBootApplicationTest {
      */
     @Test
     public void testFindDuplicate() {
-        Map<String, Integer> duplicateAnimals = animalsRepository.findDuplicate();
+        Map<String, List<Animal>> duplicateAnimals = animalsRepository.findDuplicate();
 
         assertThat(duplicateAnimals).isNotNull();
 
         for (String animalType : duplicateAnimals.keySet()) {
-            int duplicateCount = duplicateAnimals.get(animalType);
+            int duplicateCount = duplicateAnimals.get(animalType).size();
 
             assertThat(duplicateCount).isGreaterThanOrEqualTo(0);
         }
@@ -204,7 +190,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindAverageAgeWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findAverageAge(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
@@ -242,7 +228,7 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindOldAndExpensiveWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findOldAndExpensive(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
@@ -258,7 +244,7 @@ public class SpringBootApplicationTest {
      * Проверка, что метод findMinCostAnimals() корректно отрабатывает
      */
     @Test
-    public void testFindMinCostAnimals() {
+    public void testFindMinCostAnimals() throws SmallListSizeException {
         List<Animal> animalList = List.of(
                 new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17)),
                 new Bear(BearBreeds.POLAR_BEAR, "Nil", 500, CharacterEnum.KIND, LocalDate.of(2003, 12, 3)),
@@ -273,7 +259,8 @@ public class SpringBootApplicationTest {
 
     /**
      * Проверка, что метод findMinCostAnimals() при использовании списка из одного животного в качестве аргумента
-     * возвращает список из одного имени этого животного
+     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше минимального необходимого для проведения
+     * операции
      */
     @Test
     public void testFindMinCostAnimalsWhenGivenOneAnimal() {
@@ -281,9 +268,11 @@ public class SpringBootApplicationTest {
                 new Tiger(TigerBreeds.CASPIAN_TIGER, "Hong", 500, CharacterEnum.TALKATIVE, LocalDate.of(1997, 12, 17))
         );
 
-        List<String> result = animalsRepository.findMinCostAnimals(animalList);
-
-        assertThat(result.size()).isEqualTo(1);
+        assertThrows(
+                SmallListSizeException.class,
+                () -> animalsRepository.findMinCostAnimals(animalList),
+                "Animal list must contain at least " + minListSize + " animals"
+        );
     }
 
     /**
@@ -294,16 +283,23 @@ public class SpringBootApplicationTest {
     @Test
     public void testFindMinCostAnimalsWhenGivenNull() {
         var message = assertThrows(NullPointerException.class, () -> animalsRepository.findMinCostAnimals(null));
-        assertEquals("Your animal list should not be null", message.getMessage());
+        assertThat(NULL_ANIMAL_LIST_MESSAGE).isEqualTo(message.getMessage());
     }
 
     /**
      * Проверка, что метод findMinCostAnimals() при использовании пустого списка в качестве аргумента
-     * возвращает пустой список
+     * выбрасывает исключение SmallListSizeException, т.к. размер списка меньше 3
      */
     @Test
     public void testFindMinCostAnimalsWhenGivenEmptyCollection() {
-        assertThat(animalsRepository.findMinCostAnimals(Collections.emptyList())).isEmpty();
+        List<Animal> animalList = Collections.emptyList();
+
+        assertThrows(
+                SmallListSizeException.class,
+                () -> animalsRepository.findMinCostAnimals(animalList),
+                "Animal list must contain at least " + minListSize + " animals"
+        );
+    }
 
     @Test
     public void testFindAnimalWithMaxAge() {

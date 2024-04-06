@@ -1,7 +1,8 @@
 package repository;
 
 import dto.Animal;
-import dto.AnimalsEnum;
+import exception.NegativeAgeParameterException;
+import exception.SmallListSizeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.CreateAnimalService;
 import service.helper.UtilityClass;
@@ -56,6 +57,10 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         if (animalMap == null) {
             throw new NullPointerException("Your animal collection should not be null");
         }
+        if (n < 0) {
+            System.err.println("Input argument \"n\" = " + n);
+            throw new NegativeAgeParameterException("Age parameter \"n\" should be greater or equals to 0");
+        }
 
         animalMap.values()
                 .forEach(
@@ -63,13 +68,13 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
                             Animal oldestAnimal = findAnimalWithMaxAge(animalList);
                             int maxAge = calculateAge(oldestAnimal.getBirthDate());
 
-                            if (n > 0 && maxAge < n) {
+                            if (maxAge < n) {
                                 result.put(oldestAnimal, maxAge);
                             } else {
                                 for (Animal animal : animalList) {
                                     int age = calculateAge(animal.getBirthDate());
 
-                                    if (age > n && n > 0) {
+                                    if (age > n) {
                                         result.put(animal, age);
                                     }
                                 }
@@ -153,14 +158,21 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
     }
 
     @Override
-    public List<String> findMinCostAnimals(List<Animal> animalList) {
+    public List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException {
+        // Минимальное количество животных, необходимое для проведения операции (требование задания - вывод 3 животных)
+        final int minListSize = 3;
+
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
+        }
+        if (animalList.size() < minListSize) {
+            System.err.println("Input animalList size = " + animalList.size());
+            throw new SmallListSizeException("Animal list must contain at least " + minListSize + " animals");
         }
 
         return animalList.stream()
                 .sorted(Comparator.comparing(Animal::getCost))
-                .limit(3)
+                .limit(minListSize)
                 .map(Animal::getName)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());

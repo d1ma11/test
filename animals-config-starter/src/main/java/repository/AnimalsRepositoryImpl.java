@@ -5,11 +5,13 @@ import exception.NegativeAgeParameterException;
 import exception.SmallListSizeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import service.CreateAnimalService;
+import service.helper.JsonHelper;
 import service.helper.UtilityClass;
 
 import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -17,14 +19,20 @@ import static service.helper.SearchUtilityClass.*;
 import static service.helper.UtilityClass.getAnimalType;
 
 public class AnimalsRepositoryImpl implements AnimalsRepository {
-    private Map<String, List<Animal>> animalMap = new HashMap<>();
+    private Map<String, List<Animal>> animalMap = new ConcurrentHashMap<>();
 
     @Autowired
     private CreateAnimalService createAnimalService;
+    @Autowired
+    private JsonHelper jsonHelper;
 
     @PostConstruct
     public void init() {
-        animalMap = createAnimalService.createAnimals();
+        Map<String, List<Animal>> tempAnimalMap = createAnimalService.createAnimals();
+        tempAnimalMap.forEach((key, value) -> {
+            List<Animal> synchronizedList = Collections.synchronizedList(value);
+            animalMap.put(key, synchronizedList);
+        });
     }
 
     public Map<String, List<Animal>> getAnimalMap() {
@@ -40,7 +48,7 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         if (animalMap == null) {
             throw new NullPointerException("Your animal collection should not be null");
         }
-        return animalMap.values().stream()
+        Map<String, LocalDate> result = animalMap.values().stream()
                 .flatMap(List::stream)
                 .filter(animal -> isLeapYear(animal.getBirthDate().getYear()))
                 .collect(Collectors.toMap(
@@ -48,6 +56,10 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
                         Animal::getBirthDate,
                         (oldValue, newValue) -> newValue
                 ));
+
+        jsonHelper.writeToJsonFile("findLeapYearNames", result);
+
+        return result;
     }
 
     @Override
@@ -82,6 +94,8 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
                         }
                 );
 
+        jsonHelper.writeToJsonFile("findOlderAnimal", result);
+
         return result;
     }
 
@@ -107,6 +121,8 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
                         result.put(animalType.toString(), duplicateAnimals);
                     }
                 });
+
+        jsonHelper.writeToJsonFile("findDuplicate", result);
 
         return result;
     }
@@ -135,9 +151,13 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
             throw new NullPointerException("Your animal list should not be null");
         }
 
-        return animalList.stream()
+        OptionalDouble optionalDouble = animalList.stream()
                 .mapToDouble(animal -> calculateAge(animal.getBirthDate()))
                 .average();
+
+        jsonHelper.writeToJsonFile("findAverageAge", optionalDouble.isPresent() ? optionalDouble.getAsDouble() : -1);
+
+        return optionalDouble;
     }
 
     @Override
@@ -151,10 +171,14 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
                 .average()
                 .orElse(0);
 
-        return animalList.stream()
+        List<Animal> result = animalList.stream()
                 .filter(animal -> calculateAge(animal.getBirthDate()) > 5 && animal.getCost().doubleValue() > averageCost)
                 .sorted(Comparator.comparing(Animal::getBirthDate))
                 .collect(Collectors.toList());
+
+        jsonHelper.writeToJsonFile("findOldAndExpensive", result);
+
+        return result;
     }
 
     @Override
@@ -170,11 +194,15 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
             throw new SmallListSizeException("Animal list must contain at least " + minListSize + " animals");
         }
 
-        return animalList.stream()
+        List<String> result = animalList.stream()
                 .sorted(Comparator.comparing(Animal::getCost))
                 .limit(minListSize)
                 .map(Animal::getName)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());
+
+        jsonHelper.writeToJsonFile("findMinCostAnimals", result);
+
+        return result;
     }
 }

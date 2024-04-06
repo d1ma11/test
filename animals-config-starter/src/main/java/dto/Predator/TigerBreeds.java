@@ -17,6 +17,15 @@ public enum TigerBreeds {
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 
+    public static TigerBreeds forName(String name) {
+        for (TigerBreeds value : VALUES) {
+            if (value.name().replace("_", " ").equals(name)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static TigerBreeds randomBreed() {
         return VALUES.get(RANDOM.nextInt(SIZE));
     }

@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static service.helper.UtilityClass.logAnimalDetails;
+
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
     private final int animalsCountToCreate = 20;
@@ -56,6 +58,8 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
             }
             Animal newAnimalValue = createAnimal(animalType);
             animals.get(animalTypeKey).add(newAnimalValue);
+
+            logAnimalDetails(newAnimalValue);
         }
         return animals;
     }

@@ -1,8 +1,8 @@
 package service;
 
+import dto.AnimalsEnum;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
-import dto.AnimalsEnum;
 
 public class CreateAnimalServicePostProcessor implements BeanPostProcessor {
     @Override

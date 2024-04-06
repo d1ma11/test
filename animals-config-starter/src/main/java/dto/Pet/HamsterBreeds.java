@@ -14,6 +14,15 @@ public enum HamsterBreeds {
     private static final int SIZE = VALUES.size();
     private static final Random RANDOM = new Random();
 
+    public static HamsterBreeds forName(String name) {
+        for (HamsterBreeds value : VALUES) {
+            if (value.name().replace("_", " ").equals(name)) {
+                return value;
+            }
+        }
+        return null;
+    }
+
     public static HamsterBreeds randomBreed() {
         return VALUES.get(RANDOM.nextInt(SIZE));
     }

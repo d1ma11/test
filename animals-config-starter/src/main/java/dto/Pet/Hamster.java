@@ -1,12 +1,23 @@
 package dto.Pet;
 
+import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import dto.AnimalsEnum;
+import dto.CharacterEnum;
+import service.helper.Base64Serializer;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 
-import dto.CharacterEnum;
+import static service.helper.UtilityClass.getSecretLine;
 
+@JsonTypeName("hamster")
 public class Hamster extends Pet {
+
+    public Hamster() {
+    }
 
     public Hamster(HamsterBreeds breed, String name, double cost, CharacterEnum character, LocalDate birthDate) {
         this.breed = breed.toString().replace("_", " ");
@@ -14,6 +25,7 @@ public class Hamster extends Pet {
         this.cost = new BigDecimal(cost).setScale(2, RoundingMode.HALF_UP);
         this.character = character.toString();
         this.birthDate = birthDate;
+        this.secretInformation = getSecretLine(AnimalsEnum.HAMSTER);
     }
 
     @Override
@@ -36,9 +48,16 @@ public class Hamster extends Pet {
         return character;
     }
 
+    @JsonSerialize(using = LocalDateSerializer.class)
     @Override
     public LocalDate getBirthDate() {
         return birthDate;
+    }
+
+    @JsonSerialize(using = Base64Serializer.class)
+    @Override
+    public String getSecretInformation() {
+        return secretInformation;
     }
 
     @Override
@@ -48,6 +67,13 @@ public class Hamster extends Pet {
 
     @Override
     public String toString() {
-        return "Hamster [breed=" + breed + ", name=" + name + ", cost=" + cost + ", character=" + character + ", birthDate=" + birthDate + "]";
+        return "Hamster{" +
+                "breed='" + breed + '\'' +
+                ", name='" + name + '\'' +
+                ", cost=" + cost +
+                ", character='" + character + '\'' +
+                ", birthDate=" + birthDate +
+                ", secretInformation='" + secretInformation + '\'' +
+                '}';
     }
 }

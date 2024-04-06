@@ -13,6 +13,8 @@ import static service.helper.UtilityClass.logAnimalDetails;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
+    private final int animalsCountToCreate = 20;
+
     private final AnimalFactory animalFactory;
 
     private AnimalsEnum animalType;
@@ -48,7 +50,7 @@ public class CreateAnimalServiceImpl implements CreateAnimalService {
     public Map<String, List<Animal>> createAnimals() {
         Map<String, List<Animal>> animals = new HashMap<>();
 
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < animalsCountToCreate; i++) {
             animalType = AnimalsEnum.randomAnimal();
             String animalTypeKey = animalType.name();
             if (!animals.containsKey(animalTypeKey)) {

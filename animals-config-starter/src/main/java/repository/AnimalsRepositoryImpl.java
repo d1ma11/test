@@ -30,8 +30,7 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
     public void init() {
         Map<String, List<Animal>> tempAnimalMap = createAnimalService.createAnimals();
         tempAnimalMap.forEach((key, value) -> {
-            List<Animal> synchronizedList = Collections.synchronizedList(value);
-            animalMap.put(key, synchronizedList);
+            animalMap.put(key, Collections.synchronizedList(value));
         });
     }
 
@@ -70,6 +69,7 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
             throw new NullPointerException("Your animal collection should not be null");
         }
         if (n < 0) {
+            System.err.println("Input argument \"n\" = " + n);
             throw new NegativeAgeParameterException("Age parameter \"n\" should be greater or equals to 0");
         }
 
@@ -182,16 +182,20 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
 
     @Override
     public List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException {
+        // Минимальное количество животных, необходимое для проведения операции (требование задания - вывод 3 животных)
+        final int minListSize = 3;
+
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
         }
-        if (animalList.size() < 3) {
-            throw new SmallListSizeException("Animal list must contain at least 3 animals");
+        if (animalList.size() < minListSize) {
+            System.err.println("Input animalList size = " + animalList.size());
+            throw new SmallListSizeException("Animal list must contain at least " + minListSize + " animals");
         }
 
         List<String> result = animalList.stream()
                 .sorted(Comparator.comparing(Animal::getCost))
-                .limit(3)
+                .limit(minListSize)
                 .map(Animal::getName)
                 .sorted(Comparator.reverseOrder())
                 .collect(Collectors.toList());

@@ -25,6 +25,7 @@ dependencies {
     implementation group: 'javax.annotation', name: 'javax.annotation-api', version: '1.3.2'
     implementation group: 'org.springframework.boot', name: 'spring-boot-autoconfigure', version: '2.7.4'
     implementation group: 'org.springframework.boot', name: 'spring-boot-starter', version: '2.7.4'
+    implementation group: 'org.postgresql', name: 'postgresql', version: '42.7.3'
     testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', version: '2.7.4'
     implementation project(':animals-config-starter')
 

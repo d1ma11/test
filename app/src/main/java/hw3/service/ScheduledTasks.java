@@ -2,6 +2,8 @@ package hw3.service;
 
 import dto.AbstractAnimal;
 import dto.Animal;
+import service.DatabaseConnection;
+import dto.db_objects.TableRecord;
 import exception.SmallListSizeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -41,7 +43,7 @@ public class ScheduledTasks {
 
     @PostConstruct
     public void init() {
-        ScheduledExecutorService executor = Executors.newScheduledThreadPool(6);
+        ScheduledExecutorService executor = Executors.newScheduledThreadPool(7);
 
         executor.scheduleAtFixedRate(() -> {
             Thread.currentThread().setName("DuplicatePrinter");
@@ -97,6 +99,43 @@ public class ScheduledTasks {
             }
         }, 6, 10, TimeUnit.SECONDS);
 
+        executor.scheduleAtFixedRate(() -> {
+            Thread.currentThread().setName("Fetching database data");
+            databaseSchedule();
+        }, 7, 10, TimeUnit.SECONDS);
+
+    }
+
+    /**
+     * Логирование данных из базы данных в консоль
+     */
+    public void databaseSchedule() {
+        System.out.println(
+                        "\n7. Thread: " + Thread.currentThread().getName() +
+                        " - executing method printDuplicate()"
+        );
+
+        try {
+            List<TableRecord> recordsList = DatabaseConnection.getCreatures();
+            for (TableRecord record : recordsList) {
+                System.out.println("Record of type:" + record.getClass().getSimpleName() + " " + record);
+            }
+            recordsList = DatabaseConnection.getHabitats();
+            for (TableRecord record : recordsList) {
+                System.out.println("Record of type:" + record.getClass().getSimpleName() + " " + record);
+            }
+            recordsList = DatabaseConnection.getProviders();
+            for (TableRecord record : recordsList) {
+                System.out.println("Record of type:" + record.getClass().getSimpleName() + " " + record);
+            }
+            recordsList = DatabaseConnection.getAnimalTypes();
+            for (TableRecord record : recordsList) {
+                System.out.println("Record of type:" + record.getClass().getSimpleName() + " " + record);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        System.out.print(ANSI_RESET);
     }
 
     /**

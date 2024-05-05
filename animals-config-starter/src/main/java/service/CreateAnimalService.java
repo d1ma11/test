@@ -1,37 +1,33 @@
 package service;
 
-import dto.Animal;
-import dto.AnimalsEnum;
+import dto.AbstractAnimal;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public interface CreateAnimalService {
+
     /**
-     * РЎРѕР·РґР°РµС‚ РѕРґРЅРѕ СѓРЅРёРєР°Р»СЊРЅРѕРµ Р¶РёРІРѕС‚РЅРѕРµ СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‚РёРїР°
+     * Создает рандомное животное
+     *
+     * @return рандомное животное
      */
-    default Animal createAnimal(AnimalsEnum animal) {
-        switch (animal) {
-            case BEAR:
-                return createBear();
-            case TIGER:
-                return createTiger();
-            case PARROT:
-                return createParrot();
-            case HAMSTER:
-                return createHamster();
-            default:
-                System.out.println("Error");
-                return null;
+    AbstractAnimal createRandomAnimal();
+
+    /**
+     * Создает словарь из рандомных животных
+     *
+     * @param n количество животных
+     * @return словарь из n рандомных животных
+     */
+    default Map<String, List<AbstractAnimal>> createRandomAnimals(int n) {
+        Map<String, List<AbstractAnimal>> animalMap = new HashMap<>();
+        for (int i = 0; i < n; i++) {
+            AbstractAnimal animal = createRandomAnimal();
+            animalMap.computeIfAbsent(animal.getAnimalType(), k -> new ArrayList<>()).add(animal);
         }
+        return animalMap;
     }
-
-    Animal createBear();
-    Animal createTiger();
-    Animal createParrot();
-    Animal createHamster();
-
-    Map<String, List<Animal>> createAnimals();
-
-    void setAnimalType(AnimalsEnum animalsEnum);
 }

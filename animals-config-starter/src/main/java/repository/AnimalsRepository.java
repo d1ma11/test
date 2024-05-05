@@ -1,6 +1,6 @@
 package repository;
 
-import dto.Animal;
+import dto.db_objects.Animal;
 import exception.SmallListSizeException;
 
 import java.time.LocalDate;

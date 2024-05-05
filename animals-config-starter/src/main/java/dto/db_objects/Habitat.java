@@ -1,7 +1,13 @@
 package dto.db_objects;
 
-public class Habitat implements TableRecord {
+import jakarta.persistence.*;
 
+@Entity
+@Table(name = "habitat", schema = "animals")
+public class Habitat {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idArea;
     private String area;
 
@@ -27,13 +33,5 @@ public class Habitat implements TableRecord {
 
     public void setArea(String area) {
         this.area = area;
-    }
-
-    @Override
-    public String toString() {
-        return "Habitat{" +
-                "idArea=" + idArea +
-                ", area='" + area + '\'' +
-                '}';
     }
 }

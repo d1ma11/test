@@ -3,19 +3,27 @@ package autoconfigure;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import dto.NamesProvider;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.context.annotation.*;
-import repository.AnimalsRepository;
+import org.hibernate.SessionFactory;
+import org.hibernate.boot.Metadata;
+import org.hibernate.boot.MetadataSources;
+import org.hibernate.boot.registry.StandardServiceRegistry;
+import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import repository.AnimalsRepositoryImpl;
-import service.CreateAnimalService;
 import service.CreateAnimalServiceImpl;
 import service.CreateAnimalServicePostProcessor;
 import service.factory.AnimalFactory;
 import service.helper.JsonHelper;
+import service.helper.UtilityClass;
 
 @Configuration
-@ConditionalOnClass({AnimalsRepository.class, CreateAnimalServiceImpl.class})
 public class AnimalsConfiguration {
+
+    private static StandardServiceRegistry registry;
+    private static SessionFactory sessionFactory;
+
     @Bean
     public NamesProvider namesProvider() {
         return new NamesProvider();
@@ -27,15 +35,8 @@ public class AnimalsConfiguration {
     }
 
     @Bean
-    @Scope(value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
-    public CreateAnimalService createAnimalService(AnimalFactory animalFactory) {
+    public CreateAnimalServiceImpl createAnimalService(AnimalFactory animalFactory) {
         return new CreateAnimalServiceImpl(animalFactory);
-    }
-
-    @Bean
-    @Scope(value = "prototype", proxyMode = ScopedProxyMode.INTERFACES)
-    public AnimalsRepository animalsRepository() {
-        return new AnimalsRepositoryImpl();
     }
 
     @Bean
@@ -44,9 +45,11 @@ public class AnimalsConfiguration {
     }
 
     @Bean
-    @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public AnimalsRepositoryImpl animalsRepositoryImpl() {
-        return new AnimalsRepositoryImpl();
+    public AnimalsRepositoryImpl animalsRepositoryImpl(CreateAnimalServiceImpl createAnimalService,
+                                                       SessionFactory sessionFactory,
+                                                       UtilityClass utilityClass,
+                                                       JsonHelper jsonHelper) {
+        return new AnimalsRepositoryImpl(createAnimalService, sessionFactory, utilityClass, jsonHelper);
     }
 
     @Bean
@@ -60,5 +63,28 @@ public class AnimalsConfiguration {
     @Bean
     public JsonHelper jsonHelper() {
         return new JsonHelper(objectMapper());
+    }
+
+    @Bean
+    public SessionFactory sessionFactory() {
+        if (sessionFactory == null) {
+            try {
+                registry = new StandardServiceRegistryBuilder().configure().build();
+                MetadataSources sources = new MetadataSources(registry);
+                Metadata metadata = sources.getMetadataBuilder().build();
+                sessionFactory = metadata.getSessionFactoryBuilder().build();
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (registry != null) {
+                    StandardServiceRegistryBuilder.destroy(registry);
+                }
+            }
+        }
+        return sessionFactory;
+    }
+
+    @Bean
+    public UtilityClass utilityClass(SessionFactory sessionFactory) {
+        return new UtilityClass(sessionFactory);
     }
 }

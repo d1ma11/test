@@ -1,108 +1,46 @@
 package service.factory;
 
-import dto.Animal;
-import dto.CharacterEnum;
+import dto.AbstractAnimal;
 import dto.NamesProvider;
-import dto.Pet.Hamster;
-import dto.Pet.HamsterBreeds;
-import dto.Pet.Parrot;
-import dto.Pet.ParrotBreeds;
-import dto.Predator.Bear;
-import dto.Predator.BearBreeds;
-import dto.Predator.Tiger;
-import dto.Predator.TigerBreeds;
+import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
 import java.util.Random;
 
+@Component
 public class AnimalFactory {
-    private static final Random RANDOM = new Random();
-
+    private static final Random random = new Random();
     private final NamesProvider namesProvider;
-
-    private final double duplicateProbability = 0.6;
 
     public AnimalFactory(NamesProvider namesProvider) {
         this.namesProvider = namesProvider;
     }
 
-    /**
-     * –°–æ–∑–¥–∞–µ—Ç –º–µ–¥–≤–µ–¥—è —Å–æ —Å–ª—É—á–∞–π–Ω—ã–º–∏ –ø–∞—Ä–∞–º–µ—Ç—Ä–∞–º–∏
-     *
-     * @return –º–µ–¥–≤–µ–¥—å
-     */
-    public Animal createBear() {
-
-        if (Math.random() < duplicateProbability) {
-            return AnimalDuplicateFactory.createDuplicateBear();
-        } else {
-            BearBreeds breed = BearBreeds.randomBreed();
-            String name = namesProvider.randomName();
-            double cost = RANDOM.nextDouble(100_000, 200_000);
-            CharacterEnum character = CharacterEnum.randomCharacter();
-            LocalDate birthDate = LocalDate.ofEpochDay(RANDOM.nextInt(19_700));
-
-            return new Bear(breed, name, cost, character, birthDate);
-        }
+    public enum AnimalType {
+        PARROT, HAMSTER, TIGER, BEAR
     }
 
     /**
-     * –°–æ–∑–¥–∞–µ—Ç —Ç–∏–≥—Ä–∞ —Å–æ —Å–ª—É—á–∞–π–Ω—ã–º–∏ –ø–∞—Ä–∞–º–µ—Ç—Ä–∞–º–∏
+     * œÓÎÛ˜‡ÂÏ ÊË‚ÓÚÌÓÂ ÒÓ ÒÎÛ˜‡ÈÌ˚Ï ÚËÔÓÏ
      *
-     * @return —Ç–∏–≥—Ä
+     * @return ÊË‚ÓÚÌÓÂ
      */
-    public Animal createTiger() {
-
-        if (Math.random() < duplicateProbability) {
-            return AnimalDuplicateFactory.createDuplicateTiger();
-        } else {
-            TigerBreeds breed = TigerBreeds.randomBreed();
-            String name = namesProvider.randomName();
-            double cost = RANDOM.nextDouble(500_000, 1_000_000);
-            CharacterEnum character = CharacterEnum.randomCharacter();
-            LocalDate birthDate = LocalDate.ofEpochDay(RANDOM.nextInt(19_700));
-
-            return new Tiger(breed, name, cost, character, birthDate);
-        }
+    public AbstractAnimal getAnimal() {
+        return getAnimal(AnimalType.values()[random.nextInt(AnimalType.values().length)]);
     }
 
     /**
-     * –°–æ–∑–¥–∞–µ—Ç –ø–æ–ø—É–≥–∞—è —Å–æ —Å–ª—É—á–∞–π–Ω—ã–º–∏ –ø–∞—Ä–∞–º–µ—Ç—Ä–∞–º–∏
+     * œÓÎÛ˜‡ÂÏ ÊË‚ÓÚÌÓ„Ó ÓÔÂ‰ÂÎÂÌÌÓ„Ó ÚËÔ‡
      *
-     * @return –ø–æ–ø—É–≥–∞–π
+     * @param type ÚËÔ ÊË‚ÓÚÌÓ„Ó
+     * @return ÊË‚ÓÚÌÓÂ
      */
-    public Animal createParrot() {
+    public AbstractAnimal getAnimal(AnimalType type) {
 
-        if (Math.random() < duplicateProbability) {
-            return AnimalDuplicateFactory.createDuplicateParrot();
-        } else {
-            ParrotBreeds breed = ParrotBreeds.randomBreed();
-            String name = namesProvider.randomName();
-            double cost = RANDOM.nextDouble(500_000, 1_000_000);
-            CharacterEnum character = CharacterEnum.randomCharacter();
-            LocalDate birthDate = LocalDate.ofEpochDay(RANDOM.nextInt(19_700));
-
-            return new Parrot(breed, name, cost, character, birthDate);
-        }
-    }
-
-    /**
-     * –°–æ–∑–¥–∞–µ—Ç —Ö–æ–º—è–∫–∞ —Å–æ —Å–ª—É—á–∞–π–Ω—ã–º–∏ –ø–∞—Ä–∞–º–µ—Ç—Ä–∞–º–∏
-     *
-     * @return —Ö–æ–º—è–∫
-     */
-    public Animal createHamster() {
-
-        if (Math.random() < duplicateProbability) {
-            return AnimalDuplicateFactory.createDuplicateHamster();
-        } else {
-            HamsterBreeds breed = HamsterBreeds.randomBreed();
-            String name = namesProvider.randomName();
-            double cost = RANDOM.nextDouble(500_000, 1_000_000);
-            CharacterEnum character = CharacterEnum.randomCharacter();
-            LocalDate birthDate = LocalDate.ofEpochDay(RANDOM.nextInt(19_700));
-
-            return new Hamster(breed, name, cost, character, birthDate);
-        }
+        return switch (type) {
+            case PARROT -> new AbstractAnimal("PARROT", namesProvider.randomName(), "Lazy");
+            case HAMSTER -> new AbstractAnimal("HAMSTER", namesProvider.randomName(), "Smart");
+            case TIGER -> new AbstractAnimal("TIGER", namesProvider.randomName(), "Playful");
+            case BEAR -> new AbstractAnimal("BEAR", namesProvider.randomName(), "Shy");
+        };
     }
 }

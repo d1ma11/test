@@ -1,69 +1,50 @@
 package service;
 
-import dto.Animal;
-import dto.AnimalsEnum;
+import dto.AbstractAnimal;
 import service.factory.AnimalFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static service.helper.UtilityClass.logAnimalDetails;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class CreateAnimalServiceImpl implements CreateAnimalService {
 
     private final AnimalFactory animalFactory;
-
-    private AnimalsEnum animalType;
+    private AnimalFactory.AnimalType animalType;
 
     public CreateAnimalServiceImpl(AnimalFactory animalFactory) {
         this.animalFactory = animalFactory;
     }
 
-    @Override
-    public Animal createBear() {
-        return animalFactory.createBear();
+    public AnimalFactory.AnimalType getAnimalType() {
+        return animalType;
+    }
+
+    public void setAnimalType(AnimalFactory.AnimalType animalType) {
+        this.animalType = animalType;
     }
 
     @Override
-    public Animal createTiger() {
-        return animalFactory.createTiger();
+    public AbstractAnimal createRandomAnimal() {
+        return animalFactory.getAnimal();
     }
 
     @Override
-    public Animal createParrot() {
-        return animalFactory.createParrot();
-    }
-
-    @Override
-    public Animal createHamster() {
-        return animalFactory.createHamster();
+    public Map<String, List<AbstractAnimal>> createRandomAnimals(int n) {
+        return CreateAnimalService.super.createRandomAnimals(n);
     }
 
     /**
-     * РЎРѕР·РґР°РµС‚ 20 СѓРЅРёРєР°Р»СЊРЅС‹С… Р¶РёРІРѕС‚РЅС‹С… СЃР»СѓС‡Р°Р№РЅРѕРіРѕ С‚РёРїР°
+     * Метод для получения списка 10 рандомных животных
+     *
+     * @return Список животных длинной 10
      */
-    @Override
-    public Map<String, List<Animal>> createAnimals() {
-        Map<String, List<Animal>> animals = new HashMap<>();
-
-        for (int i = 0; i < 20; i++) {
-            animalType = AnimalsEnum.randomAnimal();
-            String animalTypeKey = animalType.name();
-            if (!animals.containsKey(animalTypeKey)) {
-                animals.put(animalTypeKey, new ArrayList<>());
-            }
-            Animal newAnimalValue = createAnimal(animalType);
-            animals.get(animalTypeKey).add(newAnimalValue);
-
-            logAnimalDetails(newAnimalValue);
+    public List<AbstractAnimal> getAnimalList() {
+        List<AbstractAnimal> animalList = new CopyOnWriteArrayList<>();
+        for (int i = 0; i < 10; i++) {
+            AbstractAnimal animal = createRandomAnimal();
+            animalList.add(animal);
         }
-        return animals;
-    }
-
-    @Override
-    public void setAnimalType(AnimalsEnum animalsEnum) {
-        this.animalType = animalsEnum;
+        return animalList;
     }
 }

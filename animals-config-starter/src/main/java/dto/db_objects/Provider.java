@@ -1,25 +1,31 @@
 package dto.db_objects;
 
-public class Provider implements TableRecord{
+import jakarta.persistence.*;
 
-    private Integer idProvider;
+@Entity
+@Table(name = "provider", schema = "animals")
+public class Provider {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int idProvider;
     private String name;
     private String phone;
 
     public Provider() {
     }
 
-    public Provider(Integer idProvider, String name, String phone) {
+    public Provider(int idProvider, String name, String phone) {
         this.idProvider = idProvider;
         this.name = name;
         this.phone = phone;
     }
 
-    public Integer getIdProvider() {
+    public int getIdProvider() {
         return idProvider;
     }
 
-    public void setIdProvider(Integer idProvider) {
+    public void setIdProvider(int idProvider) {
         this.idProvider = idProvider;
     }
 
@@ -37,14 +43,5 @@ public class Provider implements TableRecord{
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    @Override
-    public String toString() {
-        return "Provider{" +
-                "idProvider=" + idProvider +
-                ", name='" + name + '\'' +
-                ", phone='" + phone + '\'' +
-                '}';
     }
 }

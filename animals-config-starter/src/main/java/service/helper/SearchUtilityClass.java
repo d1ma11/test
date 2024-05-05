@@ -1,6 +1,6 @@
 package service.helper;
 
-import dto.Animal;
+import dto.db_objects.Animal;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -8,7 +8,8 @@ import java.util.List;
 
 public final class SearchUtilityClass {
 
-    private SearchUtilityClass() {}
+    private SearchUtilityClass() {
+    }
 
     /**
      * Високосный ли год?

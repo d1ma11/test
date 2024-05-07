@@ -1,6 +1,6 @@
 package service.helper;
 
-import dto.db_objects.Animal;
+import dto.Animal;
 
 import java.time.LocalDate;
 import java.time.Period;

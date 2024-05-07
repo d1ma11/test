@@ -1,0 +1,15 @@
+INSERT INTO animals.animal(id_animal,
+                           id_breed,
+                           id_type,
+                           name,
+                           cost,
+                           character,
+                           birth_date,
+                           secret_information)
+VALUES (1, 1, 1, 'Misha', 12345.53, 'Angry', '2016-05-05', 'Likes raspberries'),
+       (2, 1, 1, 'Misha', 465498.65, 'Angry', '2016-05-05', 'Likes meat'),
+       (3, 1, 1, 'Misha', 465498.65, 'Angry', '2016-05-05', 'Likes playing with ball'),
+       (4, 2, 2, 'Fedya', 56465.21, 'Shy', '2017-10-14', 'All stripes on the tigers body are unique'),
+       (5, 3, 4, 'Jiggly', 215.23, 'Joyful', '2021-12-01', 'Some hamsters eat their cubs'),
+       (6, 4, 3, 'Kesha', 1654.97, 'Smart', '2023-01-03',
+        'Parrots have acute hearing and turn their heads one hundred and eighty degrees');

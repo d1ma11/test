@@ -1,60 +1,43 @@
 package repository;
 
-import dto.db_objects.Animal;
-import dto.db_objects.AnimalType;
+import dto.Animal;
 import exception.NegativeAgeParameterException;
 import exception.SmallListSizeException;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
-import service.CreateAnimalServiceImpl;
 import service.helper.JsonHelper;
-import service.helper.UtilityClass;
 
-import javax.annotation.PostConstruct;
 import java.time.LocalDate;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import static service.helper.SearchUtilityClass.*;
-
+import static service.helper.SearchUtilityClass.calculateAge;
+import static service.helper.SearchUtilityClass.isLeapYear;
 
 @Service
-public class AnimalsRepositoryImpl implements AnimalsRepository {
+public class AnimalsRepositoryImpl {
 
     private final static Logger LOGGER = LoggerFactory.getLogger(AnimalsRepositoryImpl.class);
-    private final CreateAnimalServiceImpl createAnimalService;
-    private final SessionFactory sessionFactory;
-    private final UtilityClass utilityClass;
+    private final AnimalsRepository animalsRepository;
     private final JsonHelper jsonHelper;
 
-    public AnimalsRepositoryImpl(CreateAnimalServiceImpl createAnimalService, SessionFactory getSessionFactory, UtilityClass utilityClass, JsonHelper jsonHelper) {
-        this.createAnimalService = createAnimalService;
-        this.sessionFactory = getSessionFactory;
-        this.utilityClass = utilityClass;
+    public AnimalsRepositoryImpl(@Lazy AnimalsRepository animalsRepository, JsonHelper jsonHelper) {
+        this.animalsRepository = animalsRepository;
         this.jsonHelper = jsonHelper;
     }
 
-    @PostConstruct
-    public void init() {
-        List<Animal> animals = createAnimalService
-                .getAnimalList()
-                .stream()
-                .map(Animal::new)
-                .toList();
-        saveAnimal(animals);
-    }
-
-    @Override
+    /**
+     * Находит всех животных, родившихся в високосный год
+     *
+     * @return массив животных
+     */
     public Map<String, LocalDate> findLeapYearNames() {
-        Map<String, List<Animal>> animalMap = utilityClass.getAnimalsFromDatabase();
+        List<Animal> animals = animalsRepository.findAll();
 
-        Map<String, LocalDate> result = animalMap.values().stream()
-                .flatMap(List::stream)
+        Map<String, LocalDate> result = animals.stream()
                 .filter(animal -> isLeapYear(animal.getBirthDate().getYear()))
                 .collect(Collectors.toMap(
                         animal -> animal.getAnimalType() + " " + animal.getName(),
@@ -67,70 +50,62 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         return result;
     }
 
-    @Override
+    /**
+     * Находит всех животных старше N лет
+     *
+     * @param n ограничение по возрасту
+     * @return массив животных
+     */
     public Map<Animal, Integer> findOlderAnimal(int n) {
-        Map<String, List<Animal>> animalMap = utilityClass.getAnimalsFromDatabase();
-        Map<Animal, Integer> result = new HashMap<>();
+        Set<Animal> animals = new HashSet<>(animalsRepository.findAll());
 
         if (n < 0) {
             throw new NegativeAgeParameterException("Age parameter \"n\" should be greater or equals to 0");
         }
 
-        animalMap.values()
-                .forEach(
-                        animalList -> {
-                            Animal oldestAnimal = findAnimalWithMaxAge(animalList);
-                            int maxAge = calculateAge(oldestAnimal.getBirthDate());
-
-                            if (maxAge < n) {
-                                result.put(oldestAnimal, maxAge);
-                            } else {
-                                for (Animal animal : animalList) {
-                                    int age = calculateAge(animal.getBirthDate());
-
-                                    if (age > n) {
-                                        result.put(animal, age);
-                                    }
-                                }
-                            }
-                        }
-                );
+        Map<Animal, Integer> result = animals.stream()
+                .collect(Collectors.toMap(
+                        Function.identity(),
+                        animal -> calculateAge(animal.getBirthDate())
+                ))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > n)
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
         jsonHelper.writeToJsonFile("findOlderAnimal", result);
 
         return result;
     }
 
-    @Override
+    /**
+     * Находит дубликаты животных
+     */
     public Map<String, List<Animal>> findDuplicate() {
-        Map<String, List<Animal>> animalMap = utilityClass.getAnimalsFromDatabase();
+        List<Animal> animals = animalsRepository.findAll();
+
         Map<String, List<Animal>> result = new HashMap<>();
 
-        if (animalMap == null) {
-            throw new NullPointerException("Your animal collection should not be null");
-        }
+        Map<String, List<Animal>> groupedByType = animals.stream()
+                .collect(Collectors.groupingBy(animal -> animal.getAnimalType().toString()));
 
-        animalMap.values().stream()
-                .flatMap(List::stream)
-                .collect(Collectors.groupingBy(Animal::getAnimalType))
-                .forEach((animalType, animalList) -> {
-                    List<Animal> duplicateAnimals = animalList.stream()
-                            .collect(Collectors.groupingBy(Function.identity()))
-                            .entrySet().stream()
-                            .filter(entry -> entry.getValue().size() > 1)
-                            .flatMap(entry -> Collections.nCopies(entry.getValue().size(), entry.getKey()).stream())
-                            .collect(Collectors.toList());
-                    if (!duplicateAnimals.isEmpty()) {
-                        result.put(animalType.toString(), duplicateAnimals);
-                    }
-                });
+        for (Map.Entry<String, List<Animal>> entry : groupedByType.entrySet()) {
+            List<Animal> duplicateAnimals = entry.getValue().stream()
+                    .collect(Collectors.groupingBy(Function.identity()))
+                    .entrySet().stream()
+                    .filter(e -> e.getValue().size() > 1)
+                    .flatMap(e -> e.getValue().stream())
+                    .collect(Collectors.toList());
+
+            if (!duplicateAnimals.isEmpty()) {
+                result.put(entry.getKey(), duplicateAnimals);
+            }
+        }
 
         jsonHelper.writeToJsonFile("findDuplicate", result);
 
         return result;
     }
 
-    @Override
     public void printDuplicate() {
         Map<String, List<Animal>> duplicateAnimals = findDuplicate();
 
@@ -148,7 +123,12 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         }
     }
 
-    @Override
+    /**
+     * Находит средний возраст всех животных
+     *
+     * @param animalList список животных
+     * @return средний возраст
+     */
     public OptionalDouble findAverageAge(List<Animal> animalList) {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
@@ -163,7 +143,14 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         return optionalDouble;
     }
 
-    @Override
+    /**
+     * Находит животных, которые:
+     * - старше 5 лет
+     * - цена больше средней стоимости всех животных
+     *
+     * @param animalList список животных
+     * @return отсортированный по дате рождения (по возрастанию) список животных
+     */
     public List<Animal> findOldAndExpensive(List<Animal> animalList) {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
@@ -184,7 +171,13 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         return result;
     }
 
-    @Override
+    /**
+     * Находит максимум 3 животных с самой низкой ценой
+     *
+     * @param animalList список животных
+     * @return список имен, отсортированный в обратном порядке
+     * @throws SmallListSizeException если размер списка animalList меньше, чем 3
+     */
     public List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
@@ -203,32 +196,5 @@ public class AnimalsRepositoryImpl implements AnimalsRepository {
         jsonHelper.writeToJsonFile("findMinCostAnimals", result);
 
         return result;
-    }
-
-    private void saveAnimal(List<Animal> animalList) {
-        try (Session session = sessionFactory.openSession()) {
-            Transaction transaction = session.beginTransaction();
-
-            Set<AnimalType> animalTypes = animalList.stream().map(Animal::getAnimalType).collect(Collectors.toSet());
-
-            for (AnimalType animalType : animalTypes) {
-                for (Animal animal : animalList) {
-                    if (animal.getAnimalType().equals(animalType)) {
-                        animalType.addToAnimalList(animal);
-                        animal.setAnimalType(animalType);
-                    }
-                }
-            }
-
-            for (AnimalType animalType : animalTypes) session.persist(animalType);
-
-            for (Animal animal : animalList) {
-                session.persist(animal.getBreed());
-                session.persist(animal);
-            }
-            transaction.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 }

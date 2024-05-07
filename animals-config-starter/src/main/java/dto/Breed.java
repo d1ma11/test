@@ -1,4 +1,4 @@
-package dto.db_objects;
+package dto;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
@@ -11,7 +11,9 @@ import java.util.List;
 public class Breed {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int idBreed;
+
+    private String breedName;
 
     @OneToMany(mappedBy = "breed", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonBackReference
@@ -24,12 +26,12 @@ public class Breed {
         this.animalList = animalList;
     }
 
-    public int getId() {
-        return id;
+    public int getIdBreed() {
+        return idBreed;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setIdBreed(int id) {
+        this.idBreed = id;
     }
 
     public List<Animal> getAnimalList() {
@@ -38,5 +40,13 @@ public class Breed {
 
     public void setAnimalList(List<Animal> animalList) {
         this.animalList = animalList;
+    }
+
+    public String getBreedName() {
+        return breedName;
+    }
+
+    public void setBreedName(String breedName) {
+        this.breedName = breedName;
     }
 }

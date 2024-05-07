@@ -1,0 +1,17 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/mts
+    username: postgres
+    password: 1234567890
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+
+  flyway:
+    user: postgres
+    password: 1234567890
+    default-schema: animals
+    locations: classpath:/db/migration
+    baseline-on-migrate: true

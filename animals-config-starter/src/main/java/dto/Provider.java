@@ -1,4 +1,4 @@
-package dto.db_objects;
+package dto;
 
 import jakarta.persistence.*;
 

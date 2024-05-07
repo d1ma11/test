@@ -1,8 +1,6 @@
 package service.helper;
 
-import dto.db_objects.Animal;
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
+import dto.Animal;
 import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
@@ -13,22 +11,12 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 @Component
 public class UtilityClass {
     private static final String SECRET_FILE_PATH = "D:\\Yndx\\МТС\\Проекты\\backup\\mts\\animals-config-starter\\src\\main\\resources\\secretStore\\secretInformation.txt";
     private static final String LOG_FILE_PATH = "mts/animals-config-starter/src/main/resources/animals/logData.txt";
     private static int animalCount = 0;
-
-    private final SessionFactory sessionFactory;
-
-    public UtilityClass(SessionFactory sessionFactory) {
-        this.sessionFactory = sessionFactory;
-    }
 
     public synchronized static void logAnimalDetails(Animal animal) {
         Path logFilePathObj = Paths.get(LOG_FILE_PATH);
@@ -68,23 +56,5 @@ public class UtilityClass {
             throw new RuntimeException(e);
         }
         return animalInfo;
-    }
-
-    public Map<String, List<Animal>> getAnimalsFromDatabase() {
-        Map<String, List<Animal>> animalMap = new ConcurrentHashMap<>();
-
-        try (Session session = sessionFactory.openSession()) {
-            List<Animal> animals;
-            animals = session.createQuery("FROM Animal", Animal.class).getResultList();
-            for (Animal animal : animals) {
-                if (!animalMap.containsKey(animal.getAnimalType().toString())) {
-                    animalMap.put(animal.getAnimalType().toString(), new CopyOnWriteArrayList<>());
-                }
-                animalMap.get(animal.getAnimalType().toString()).add(animal);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return animalMap;
     }
 }

@@ -1,10 +1,7 @@
-package dto.db_objects;
+package dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,24 +11,15 @@ public class AnimalType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int idType;
-    private String type;
+    private String typeName;
     private boolean isWild;
-
-    @OneToMany(targetEntity = Animal.class, fetch = FetchType.EAGER)
-    @JsonBackReference
-    private List<Animal> animalList = new ArrayList<>();
 
     public AnimalType() {
     }
 
-    public AnimalType(String type, boolean isWild, List<Animal> animalList) {
-        this.type = type;
+    public AnimalType(String type, boolean isWild) {
+        this.typeName = type;
         this.isWild = isWild;
-        this.animalList = animalList;
-    }
-
-    public boolean addToAnimalList(Animal animal) {
-        return animalList.add(animal);
     }
 
     public int getIdType() {
@@ -42,12 +30,12 @@ public class AnimalType {
         this.idType = idType;
     }
 
-    public String getType() {
-        return type;
+    public String getTypeName() {
+        return typeName;
     }
 
-    public void setType(String type) {
-        this.type = type;
+    public void setTypeName(String type) {
+        this.typeName = type;
     }
 
     public boolean isWild() {
@@ -58,32 +46,24 @@ public class AnimalType {
         isWild = wild;
     }
 
-    public List<Animal> getAnimalList() {
-        return animalList;
-    }
-
-    public void setAnimalList(List<Animal> animalList) {
-        this.animalList = animalList;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         AnimalType that = (AnimalType) o;
-        return Objects.equals(type, that.type);
+        return Objects.equals(typeName, that.typeName);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(type);
+        return Objects.hash(typeName);
     }
 
     @Override
     public String toString() {
         return "AnimalType{" +
                 "idType=" + idType +
-                ", type='" + type + '\'' +
+                ", type='" + typeName + '\'' +
                 ", isWild=" + isWild +
                 '}';
     }

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/html" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Add Animal</title>
+</head>
+<body>
+<h2>Add New Animal</h2>
+<form action="#"
+      th:action="@{/add}"
+      th:object="${animal}"
+      method="post">
+
+    <label for="name">Name</label>
+    <input type="text" id="name" th:field="*{name}">
+
+    <label for="bdate">Birth Date</label>
+    <input type="text" id="bdate" th:field="*{birthDate}" th:value="${#dates.format(animal.birthDate, 'yyyy-MM-dd')}">
+
+    <label for="cost">Cost</label>
+    <input type="text" id="cost" th:field="*{cost}">
+
+    <label for="character">Character</label>
+    <input type="text" id="character" th:field="*{character}">
+
+    <label for="secretInformation">Secret Information</label>
+    <input type="text" id="secretInformation" th:field="*{secretInformation}">
+
+    <label for="breed">Breed</label>
+    <select id="breed" th:field="*{breed}">
+        <option th:each="breed : ${breeds}" th:value="${breed.idBreed}" th:text="${breed.breedName}"></option>
+    </select>
+
+    <label for="animalType">Animal Type</label>
+    <select id="animalType" th:field="*{animalType}">
+        <option th:each="type : ${animalTypes}" th:value="${type.idType}" th:text="${type.typeName}"></option>
+    </select>
+
+    <input type="submit" name="action" value="add">
+    <input type="submit" name="action" value="cancel">
+</form>
+</body>
+</html>

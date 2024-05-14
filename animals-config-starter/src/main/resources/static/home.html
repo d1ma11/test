@@ -1,0 +1,34 @@
+<table>
+    <thead>
+    <title>Animals</title>
+    </thead>
+    <tbody>
+    <table border="4">
+        <thead>
+        <th>ID</th>
+        <th>Breed</th>
+        <th>Animal type</th>
+        <th>Name</th>
+        <th>Cost</th>
+        <th>Character</th>
+        <th>Birth date</th>
+        <th>Secret information</th>
+        <th>DELETE</th>
+        </thead>
+        <tbody>
+        <tr th:each="animal : ${animalList}">
+            <th th:text="${animal.id}"></th>
+            <th th:text="${animal.breed}"></th>
+            <th th:text="${animal.animalType}"></th>
+            <th th:text="${animal.name}"></th>
+            <th th:text="${animal.cost}"></th>
+            <th th:text="${animal.character}"></th>
+            <th th:text="${#dates.format(animal.birthDate, 'yyyy-MM-dd')}"></th>
+            <th th:text="${animal.secretInformation}"></th>
+            <th><a th:href="@{/delete/{id}(id=${animal.id})}"></a></th>
+        </tr>
+        </tbody>
+    </table>
+    <a href="add">Add animal</a>
+    </tbody>
+</table>

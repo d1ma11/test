@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
+import org.springframework.format.annotation.DateTimeFormat;
 import service.helper.Base64Deserializer;
 import service.helper.Base64Serializer;
 
@@ -32,6 +33,7 @@ public class Animal {
     private String name;
     private BigDecimal cost;
     private String character;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
 
     @JsonSerialize(using = Base64Serializer.class)

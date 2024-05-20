@@ -1,5 +1,6 @@
 package controller;
 
+import annotation.Logging;
 import dto.Animal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +20,14 @@ public class AnimalViewController {
     }
 
     @GetMapping("/index")
+    @Logging(value = "MVC GET request - /index", entering = true, exiting = true)
     public String index(Model model) {
         model.addAttribute("animalList", animalService.getAnimals());
         return "home";
     }
 
     @PostMapping("/add")
+    @Logging(value = "MVC POST request - /add", entering = true, exiting = true)
     public String add(Model model) {
         model.addAttribute("animal", new Animal());
         model.addAttribute("breeds", animalService.getBreeds());
@@ -33,18 +36,21 @@ public class AnimalViewController {
     }
 
     @PostMapping(value = "/add", params = "action=add")
+    @Logging(value = "MVC POST request - /add", entering = true, exiting = true)
     public String addAnimal(Animal animal) {
         animalService.addAnimal(animal);
         return "redirect:/home";
     }
 
     @DeleteMapping("/delete/{id}")
+    @Logging(value = "MVC DELETE request - /add", entering = true, exiting = true)
     public String deleteAnimalById(@PathVariable(name = "id") Integer id) {
         animalService.deleteAnimalById(id);
         return "redirect:/home";
     }
 
     @GetMapping(value = "/add", params = "action=cancel")
+    @Logging(value = "MVC GET request - /add", entering = true, exiting = true)
     public String cancel() {
         return "redirect:/home";
     }

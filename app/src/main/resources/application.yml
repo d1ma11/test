@@ -18,7 +18,7 @@ spring:
 
 
   thymeleaf:
-    prefix: classpath:/resources/templates/
+    prefix: classpath:/templates/
     suffix: .html
     cache: false
 
@@ -29,4 +29,3 @@ logging:
   level:
     org:
       thymeleaf: DEBUG
-      springframework: DEBUG

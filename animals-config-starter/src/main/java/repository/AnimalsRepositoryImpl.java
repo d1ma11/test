@@ -1,5 +1,6 @@
 package repository;
 
+import annotation.Logging;
 import dto.Animal;
 import exception.NegativeAgeParameterException;
 import exception.SmallListSizeException;
@@ -34,6 +35,7 @@ public class AnimalsRepositoryImpl {
      *
      * @return массив животных
      */
+    @Logging(value = "method FindLeapYearNames()", entering = true, exiting = true)
     public Map<String, LocalDate> findLeapYearNames() {
         List<Animal> animals = animalsRepository.findAll();
 
@@ -56,6 +58,7 @@ public class AnimalsRepositoryImpl {
      * @param n ограничение по возрасту
      * @return массив животных
      */
+    @Logging(value = "method FindOlderAnimal()", entering = true, exiting = true)
     public Map<Animal, Integer> findOlderAnimal(int n) {
         Set<Animal> animals = new HashSet<>(animalsRepository.findAll());
 
@@ -80,6 +83,7 @@ public class AnimalsRepositoryImpl {
     /**
      * Находит дубликаты животных
      */
+    @Logging(value = "method FindDuplicate()", entering = true, exiting = true)
     public Map<String, List<Animal>> findDuplicate() {
         List<Animal> animals = animalsRepository.findAll();
 
@@ -106,6 +110,7 @@ public class AnimalsRepositoryImpl {
         return result;
     }
 
+    @Logging(value = "method PrintDuplicate()", entering = true, exiting = true)
     public void printDuplicate() {
         Map<String, List<Animal>> duplicateAnimals = findDuplicate();
 
@@ -129,6 +134,7 @@ public class AnimalsRepositoryImpl {
      * @param animalList список животных
      * @return средний возраст
      */
+    @Logging(value = "method FindAverageAge()", entering = true, exiting = true)
     public OptionalDouble findAverageAge(List<Animal> animalList) {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
@@ -151,6 +157,7 @@ public class AnimalsRepositoryImpl {
      * @param animalList список животных
      * @return отсортированный по дате рождения (по возрастанию) список животных
      */
+    @Logging(value = "method FindOldAndExpensive()", entering = true, exiting = true)
     public List<Animal> findOldAndExpensive(List<Animal> animalList) {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");
@@ -178,6 +185,7 @@ public class AnimalsRepositoryImpl {
      * @return список имен, отсортированный в обратном порядке
      * @throws SmallListSizeException если размер списка animalList меньше, чем 3
      */
+    @Logging(value = "method FindMicCostAnimals()", entering = true, exiting = true)
     public List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException {
         if (animalList == null) {
             throw new NullPointerException("Your animal list should not be null");

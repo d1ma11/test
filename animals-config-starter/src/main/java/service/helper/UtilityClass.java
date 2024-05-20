@@ -14,7 +14,7 @@ import java.nio.file.StandardOpenOption;
 
 @Component
 public class UtilityClass {
-    private static final String SECRET_FILE_PATH = "D:\\Yndx\\МТС\\Проекты\\backup\\mts\\animals-config-starter\\src\\main\\resources\\secretStore\\secretInformation.txt";
+    private static final String SECRET_FILE_PATH = "D:\\Yndx\\MTS\\Projects\\backup\\mts\\animals-config-starter\\src\\main\\resources\\secretStore\\secretInformation.txt";
     private static final String LOG_FILE_PATH = "mts/animals-config-starter/src/main/resources/animals/logData.txt";
     private static int animalCount = 0;
 

@@ -1,5 +1,6 @@
 package service.helper;
 
+import annotation.Logging;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
@@ -21,8 +22,9 @@ public class JsonHelper {
         this.objectMapper = objectMapper;
     }
 
+    @Logging(value = "method WriteToJsonFile()", entering = true, exiting = true)
     public synchronized void writeToJsonFile(String methodName, Object result) {
-        Path path = Paths.get("D:\\Yndx\\МТС\\Проекты\\backup\\mts\\animals-config-starter\\src\\main\\resources\\results\\" + methodName + ".json");
+        Path path = Paths.get("D:\\Yndx\\MTS\\Projects\\backup\\mts\\animals-config-starter\\src\\main\\resources\\results\\" + methodName + ".json");
         try {
             objectMapper.writerWithDefaultPrettyPrinter().writeValue(path.toFile(), result);
         } catch (IOException e) {
@@ -30,8 +32,9 @@ public class JsonHelper {
         }
     }
 
+    @Logging(value = "method ReadJson()", entering = true, exiting = true)
     public synchronized <T> T readJson(String methodName, TypeReference<T> typeReference) throws IOException {
-        Path path = Paths.get("D:\\Yndx\\МТС\\Проекты\\backup\\mts\\animals-config-starter\\src\\main\\resources\\results\\" + methodName + ".json");
+        Path path = Paths.get("D:\\Yndx\\MTS\\Projects\\backup\\mts\\animals-config-starter\\src\\main\\resources\\results\\" + methodName + ".json");
         try {
             return objectMapper.readValue(path.toFile(), typeReference);
         } catch (IOException e) {

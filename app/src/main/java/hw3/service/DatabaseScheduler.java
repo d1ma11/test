@@ -11,7 +11,7 @@ import repository.AnimalsRepositoryImpl;
 
 import java.util.List;
 
-@Component
+//@Component
 public class DatabaseScheduler {
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabaseScheduler.class);
     private final AnimalsRepositoryImpl animalsRepositoryImpl;

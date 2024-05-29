@@ -16,6 +16,10 @@ spring:
     locations: classpath:/db/migration
     baseline-on-migrate: true
 
+  security:
+    secret:
+      access: 4279ad0b6d61517bfd37b117c983ac51c8cdc6b426e67d1aafb0b70392a1388e
+      expiration: 300
 
   thymeleaf:
     prefix: classpath:/templates/
@@ -29,3 +33,4 @@ logging:
   level:
     org:
       thymeleaf: DEBUG
+      springframework: DEBUG

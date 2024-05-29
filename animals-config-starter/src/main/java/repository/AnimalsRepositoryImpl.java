@@ -31,9 +31,9 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит всех животных, родившихся в високосный год
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ
      *
-     * @return массив животных
+     * @return пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      */
     @Logging(value = "method FindLeapYearNames()", entering = true, exiting = true)
     public Map<String, LocalDate> findLeapYearNames() {
@@ -53,10 +53,10 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит всех животных старше N лет
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ N пїЅпїЅпїЅ
      *
-     * @param n ограничение по возрасту
-     * @return массив животных
+     * @param n пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @return пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      */
     @Logging(value = "method FindOlderAnimal()", entering = true, exiting = true)
     public Map<Animal, Integer> findOlderAnimal(int n) {
@@ -81,7 +81,7 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит дубликаты животных
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      */
     @Logging(value = "method FindDuplicate()", entering = true, exiting = true)
     public Map<String, List<Animal>> findDuplicate() {
@@ -129,10 +129,10 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит средний возраст всех животных
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      *
-     * @param animalList список животных
-     * @return средний возраст
+     * @param animalList пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @return пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      */
     @Logging(value = "method FindAverageAge()", entering = true, exiting = true)
     public OptionalDouble findAverageAge(List<Animal> animalList) {
@@ -150,12 +150,12 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит животных, которые:
-     * - старше 5 лет
-     * - цена больше средней стоимости всех животных
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅ:
+     * - пїЅпїЅпїЅпїЅпїЅпїЅ 5 пїЅпїЅпїЅ
+     * - пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      *
-     * @param animalList список животных
-     * @return отсортированный по дате рождения (по возрастанию) список животных
+     * @param animalList пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @return пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ (пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ) пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
      */
     @Logging(value = "method FindOldAndExpensive()", entering = true, exiting = true)
     public List<Animal> findOldAndExpensive(List<Animal> animalList) {
@@ -179,11 +179,11 @@ public class AnimalsRepositoryImpl {
     }
 
     /**
-     * Находит максимум 3 животных с самой низкой ценой
+     * пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ 3 пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
      *
-     * @param animalList список животных
-     * @return список имен, отсортированный в обратном порядке
-     * @throws SmallListSizeException если размер списка animalList меньше, чем 3
+     * @param animalList пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @return пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ, пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+     * @throws SmallListSizeException пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ animalList пїЅпїЅпїЅпїЅпїЅпїЅ, пїЅпїЅпїЅ 3
      */
     @Logging(value = "method FindMicCostAnimals()", entering = true, exiting = true)
     public List<String> findMinCostAnimals(List<Animal> animalList) throws SmallListSizeException {
